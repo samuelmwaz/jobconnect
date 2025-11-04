@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employer Operations Console</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        /* Custom styles matching the original color palette: 
+           #071739 (Deep Blue), #4B6382 (Slate Blue), #A4B5C4 (Light Blue), #E3C39D (Light Tan), #A68868 (Dark Tan) 
+        */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #071739; 
+            min-height: 100vh;
+            padding: 2rem 0;
+            display: flex;
+            flex-direction: column;
+        }
+        .console-container {
+            max-width: 1200px;
+            width: 95%;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 10px 30px rgba(7, 23, 57, 0.4);
+        }
+        .metric-card {
+             transition: transform 0.2s ease-in-out;
+             cursor: default;
+        }
+        .metric-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        /* Style for on-screen alerts */
+        #alert-container {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+    <!-- Alert Container -->
+    <div id="alert-container"></div>
+
+    <div class="console-container">
+        
+        <header class="mb-8">
+            <h1 class="text-4xl font-extrabold text-[#071739]">Employer Operations Console</h1>
+            <p class="text-lg text-[#A68868] mt-2 border-b pb-4 border-gray-200">
+                Centralized dashboard for workforce management and key performance indicators.
+            </p>
+        </header>
+
+        <!-- Key Metrics Section -->
+        <section class="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+            
+            <!-- Active Personnel (Dynamic Count) -->
+            <div class="metric-card bg-[#E3C39D] p-6 rounded-xl border-t-4 border-[#A68868] shadow-md">
+                <p class="text-sm font-medium text-gray-700 uppercase">Active Personnel (Local DB)</p>
+                <p class="text-5xl font-extrabold text-[#071739] mt-2">
+                    <span id="total-employees">...</span>
+                </p>
+                <p class="text-sm text-gray-600 mt-1">Total Registered Users in System</p>
+            </div>
+            
+            <!-- Pending PTO (Static Mock) -->
+            <div class="metric-card bg-[#CDD5DB] p-6 rounded-xl border-t-4 border-[#4B6382] shadow-md">
+                <p class="text-sm font-medium text-gray-700 uppercase">Pending PTO Requests</p>
+                <p class="text-5xl font-extrabold text-[#071739] mt-2">4</p>
+                <p class="text-sm text-gray-600 mt-1">Requiring HR/Manager Approval</p>
+            </div>
+            
+            <!-- Avg Retention Rate (Static Mock) -->
+            <div class="metric-card bg-[#E3C39D] p-6 rounded-xl border-t-4 border-[#A68868] shadow-md">
+                <p class="text-sm font-medium text-gray-700 uppercase">Avg Retention Rate</p>
+                <p class="text-5xl font-extrabold text-[#071739] mt-2">92%</p>
+                <p class="text-sm text-gray-600 mt-1">Trailing 12 Months</p>
+            </div>
+
+            <!-- NEW KPI: Total Job Applications (Dynamic Count) -->
+            <div class="metric-card bg-[#CDD5DB] p-6 rounded-xl border-t-4 border-[#4B6382] shadow-md">
+                <p class="text-sm font-medium text-gray-700 uppercase">Total Job Applications</p>
+                <p class="text-5xl font-extrabold text-[#071739] mt-2">
+                    <span id="total-applications">...</span>
+                </p>
+                <p class="text-sm text-gray-600 mt-1">Active candidates in pipeline</p>
+            </div>
+        </section>
+
+        <!-- Job Applications Overview Section -->
+        <section class="bg-[#E3C39D] p-6 rounded-xl shadow-inner border-l-4 border-[#A68868] mb-10">
+            <h2 class="text-2xl font-bold text-[#071739] mb-4 flex justify-between items-center">
+                Job Applications Overview
+                <button class="bg-[#A68868] text-white py-2 px-4 rounded-lg text-sm font-medium hover:bg-[#071739] transition shadow-lg">
+                    View Pipeline
+                </button>
+            </h2>
+            
+            <div class="overflow-x-auto bg-white rounded-lg shadow-md">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-[#CDD5DB] text-[#071739] uppercase tracking-wider">
+                        <tr>
+                            <th class="p-4 text-left text-xs font-semibold">Applicant Name</th>
+                            <th class="p-4 text-left text-xs font-semibold">Applied Position</th>
+                            <th class="p-4 text-left text-xs font-semibold w-28">Status</th>
+                            <th class="p-4 text-left text-xs font-semibold w-32 hidden sm:table-cell">Date</th>
+                            <th class="p-4 text-left text-xs font-semibold w-24">Attachments</th>
+                        </tr>
+                    </thead>
+                    <tbody id="job-applications-table-body" class="divide-y divide-gray-100">
+                        <!-- Application data will be injected here by renderJobApplicationsList() -->
+                    </tbody>
+                </table>
+                <div id="no-applications-message" class="p-4 text-center text-gray-700 font-medium hidden">No new job applications found.</div>
+            </div>
+        </section>
+
+        <!-- Team Member Overview Section -->
+        <section class="bg-[#A4B5C4] p-6 rounded-xl shadow-inner border-l-4 border-[#071739]">
+            <h2 class="text-2xl font-bold text-[#071739] mb-4 flex justify-between items-center">
+                Team Member Overview
+                <button class="bg-[#4B6382] text-white py-2 px-4 rounded-lg text-sm font-medium hover:bg-[#071739] transition shadow-lg">
+                    + Add New User
+                </button>
+            </h2>
+            
+            <!-- Search and Filter Controls -->
+            <div class="flex flex-col sm:flex-row gap-4 mb-4">
+                <!-- Search Input -->
+                <div class="flex-grow">
+                    <input 
+                        type="text" 
+                        id="user-search-input" 
+                        placeholder="Search by email..." 
+                        class="w-full p-2 border border-gray-300 rounded-lg focus:ring-[#4B6382] focus:border-[#4B6382]"
+                        onkeyup="renderUserManagementList()"
+                    >
+                </div>
+                <!-- Role Filter Dropdown -->
+                <div class="w-full sm:w-48">
+                    <select 
+                        id="role-filter-select" 
+                        class="w-full p-2 border border-gray-300 rounded-lg bg-white focus:ring-[#4B6382] focus:border-[#4B6382]"
+                        onchange="renderUserManagementList()"
+                    >
+                        <option value="all">Filter by Role (All)</option>
+                        <option value="employee">Employee</option>
+                        <option value="employer">Employer</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="overflow-x-auto bg-white rounded-lg shadow-md">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-[#CDD5DB] text-[#071739] uppercase tracking-wider">
+                        <tr>
+                            <th class="p-4 text-left text-xs font-semibold">Email</th>
+                            <th class="p-4 text-left text-xs font-semibold w-24">Role</th>
+                            <th class="p-4 text-left text-xs font-semibold w-32 hidden sm:table-cell">User ID (Preview)</th>
+                            <th class="p-4 text-left text-xs font-semibold w-24">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="user-management-table-body" class="divide-y divide-gray-100">
+                        <!-- User data will be injected here by renderUserManagementList() -->
+                    </tbody>
+                </table>
+                <div id="loading-indicator" class="p-4 text-center text-gray-500 italic hidden">Loading user data...</div>
+                <div id="no-results-message" class="p-4 text-center text-gray-700 font-medium hidden">No users match your current filters.</div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-white text-center text-xs mt-8">
+        Dashboard Data Mocked for Display
+    </footer>
+
+    <!-- JavaScript for Data Rendering and Filtering -->
+    <script>
+        
+        // --- Mock Data ---
+        const localUserDB = {
+            'ceo@workflow.com': { uid: 'mock-uid-1', role: 'employer', password: 'password' },
+            'manager@workflow.com': { uid: 'mock-uid-2', role: 'employer', password: 'password' },
+            'alice@workflow.com': { uid: 'mock-uid-3', role: 'employee', password: 'password' },
+            'bob@workflow.com': { uid: 'mock-uid-4', role: 'employee', password: 'password' },
+            'charlie@workflow.com': { uid: 'mock-uid-5', role: 'employee', password: 'password' },
+            'diana@workflow.com': { uid: 'mock-uid-6', role: 'employee', password: 'password' },
+            'ella@workflow.com': { uid: 'mock-uid-7', role: 'employee', password: 'password' },
+            'admin@workflow.com': { uid: 'mock-uid-8', role: 'employer', password: 'password' },
+        };
+
+        const mockApplicationsDB = [
+            { name: 'Gabriel Soto', email: 'gabriel.soto@applied.com', position: 'Senior Software Engineer', status: 'Reviewing', date: '2025-10-28', attachments: ['Gabriel_Resume.pdf', 'Cover_Letter.docx'] },
+            { name: 'Hannah Lee', email: 'hannah.lee@applied.com', position: 'Product Designer', status: 'New', date: '2025-11-01', attachments: ['Portfolio.zip'] },
+            { name: 'Ivan Chen', email: 'ivan.chen@applied.com', position: 'Data Scientist', status: 'Interview', date: '2025-10-15', attachments: ['Ivan_Resume.pdf', 'Data_Project_Summary.pdf'] },
+            { name: 'Jasmine Kaur', email: 'jasmine.kaur@applied.com', position: 'Senior Software Engineer', status: 'New', date: '2025-11-03', attachments: ['Jasmine_Resume.pdf'] },
+            { name: 'Kyle Brown', email: 'kyle.brown@applied.com', position: 'Technical Writer', status: 'Reviewing', date: '2025-10-30', attachments: ['Writing_Sample_1.doc', 'Writing_Sample_2.doc', 'Kyle_Resume.pdf'] },
+        ];
+
+
+        // --- Utility Functions ---
+
+        /**
+         * Displays a temporary success or error message on screen.
+         * @param {string} message The message content.
+         * @param {string} type 'green' for success, 'red' for error, 'blue' for info.
+         */
+        function alertUser(message, type = 'blue') {
+            const container = document.getElementById('alert-container');
+            
+            let colorClass, iconName;
+            switch (type) {
+                case 'green':
+                    colorClass = 'bg-green-100 border-green-400 text-green-700';
+                    iconName = 'check-circle';
+                    break;
+                case 'red':
+                    colorClass = 'bg-red-100 border-red-400 text-red-700';
+                    iconName = 'alert-triangle';
+                    break;
+                case 'blue':
+                default:
+                    colorClass = 'bg-blue-100 border-blue-400 text-blue-700';
+                    iconName = 'info';
+                    break;
+            }
+
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `p-4 border-l-4 rounded-lg shadow-lg mb-2 ${colorClass} opacity-0 transition-opacity duration-300 transform translate-x-full`;
+            alertDiv.style.maxWidth = '300px';
+
+            alertDiv.innerHTML = `
+                <div class="flex items-center">
+                    <i data-lucide="${iconName}" class="w-5 h-5 mr-3"></i>
+                    <p class="font-medium text-sm">${message}</p>
+                </div>
+            `;
+            container.appendChild(alertDiv);
+            
+            // Re-create icons for the new element
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+
+            // Animate in
+            setTimeout(() => {
+                alertDiv.classList.remove('opacity-0', 'translate-x-full');
+                alertDiv.classList.add('opacity-100', 'translate-x-0');
+            }, 10); // Small delay to ensure CSS transition is applied
+
+            // Animate out and remove after 5 seconds
+            setTimeout(() => {
+                alertDiv.classList.remove('opacity-100', 'translate-x-0');
+                alertDiv.classList.add('opacity-0', 'translate-x-full');
+                setTimeout(() => alertDiv.remove(), 500);
+            }, 5000);
+        }
+
+        /**
+         * Mocks the action of viewing an attachment.
+         * @param {string} fileName The name of the file being viewed.
+         */
+        window.viewAttachment = function(fileName) {
+            alertUser(`Simulating download/view of file: ${fileName}`, 'green');
+            console.log(`Attachment action triggered for: ${fileName}`);
+        }
+
+
+        // --- Core Rendering Logic ---
+
+        /**
+         * Renders the dynamic table of job applications and updates the KPI.
+         */
+        function renderJobApplicationsList() {
+            const tableBody = document.getElementById('job-applications-table-body');
+            const totalApplicationsSpan = document.getElementById('total-applications');
+            const noApplicationsMessage = document.getElementById('no-applications-message');
+
+            tableBody.innerHTML = ''; 
+            
+            if (mockApplicationsDB.length === 0) {
+                noApplicationsMessage.classList.remove('hidden');
+                totalApplicationsSpan.textContent = 0;
+                return;
+            }
+            
+            noApplicationsMessage.classList.add('hidden');
+            totalApplicationsSpan.textContent = mockApplicationsDB.length;
+
+            mockApplicationsDB.forEach(app => {
+                
+                let statusClass = 'bg-gray-200 text-gray-700';
+                switch (app.status) {
+                    case 'New':
+                        statusClass = 'bg-green-200 text-green-700';
+                        break;
+                    case 'Reviewing':
+                        statusClass = 'bg-yellow-200 text-yellow-700';
+                        break;
+                    case 'Interview':
+                        statusClass = 'bg-blue-200 text-blue-700';
+                        break;
+                }
+                
+                // Create attachment links/buttons
+                const attachmentCount = app.attachments ? app.attachments.length : 0;
+                let attachmentContent = `<span class="text-gray-500 italic">None</span>`;
+
+                if (attachmentCount > 0) {
+                    // Create a clickable paperclip icon with the count
+                    const firstFileName = app.attachments[0]; // Use the first file name for the mock action
+                    attachmentContent = `
+                        <button 
+                            onclick="viewAttachment('${firstFileName}')" 
+                            class="flex items-center text-[#071739] hover:text-[#4B6382] font-semibold transition text-sm"
+                            title="View ${firstFileName}"
+                        >
+                            <i data-lucide="paperclip" class="w-4 h-4 mr-1"></i>
+                            (${attachmentCount})
+                        </button>
+                    `;
+                }
+
+
+                const row = `
+                    <tr class="hover:bg-gray-50 transition duration-150">
+                        <td class="p-4 text-sm text-gray-800 font-medium">${app.name}</td>
+                        <td class="p-4 text-sm text-gray-700 font-semibold">${app.position}</td>
+                        <td class="p-4 text-sm text-gray-700">
+                            <span class="p-1 text-xs font-semibold uppercase tracking-wider rounded-md ${statusClass}">
+                                ${app.status}
+                            </span>
+                        </td>
+                        <td class="p-4 text-sm font-mono text-gray-500 hidden sm:table-cell">${app.date}</td>
+                        <td class="p-4 text-sm text-gray-700">${attachmentContent}</td>
+                    </tr>
+                `;
+                tableBody.insertAdjacentHTML('beforeend', row);
+            });
+             // Re-create icons after dynamically adding content
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+        }
+
+        /**
+         * Renders the dynamic table of users for the Employer Console, applying search and filter logic.
+         */
+        function renderUserManagementList() {
+            const tableBody = document.getElementById('user-management-table-body');
+            const totalEmployeesSpan = document.getElementById('total-employees');
+            const noResultsMessage = document.getElementById('no-results-message');
+            
+            // Get current filter values
+            const searchInput = document.getElementById('user-search-input').value.toLowerCase();
+            const roleFilter = document.getElementById('role-filter-select').value;
+            
+            // Clear existing content
+            tableBody.innerHTML = ''; 
+            noResultsMessage.classList.add('hidden');
+            
+            const userEmails = Object.keys(localUserDB);
+            
+            // 1. Filter the users
+            const filteredUsers = userEmails.filter(email => {
+                const user = localUserDB[email];
+                
+                // Search check
+                const matchesSearch = email.toLowerCase().includes(searchInput);
+                
+                // Role filter check
+                const matchesRole = roleFilter === 'all' || user.role === roleFilter;
+                
+                return matchesSearch && matchesRole;
+            }).map(email => ({ email: email, ...localUserDB[email] }));
+
+            // 2. Render results or No Results message
+            if (filteredUsers.length === 0) {
+                noResultsMessage.classList.remove('hidden');
+            } else {
+                filteredUsers.forEach(user => {
+                    
+                    // Determine styling based on role
+                    const roleIsEmployer = user.role === 'employer';
+                    const roleClass = roleIsEmployer 
+                        ? 'bg-[#A68868] text-white' // Dark Tan for Employer
+                        : 'bg-[#4B6382] text-white'; // Slate Blue for Employee
+                    
+                    const status = 'Active'; // Mock status
+                    const statusClass = 'text-green-600 font-bold';
+                    
+                    const row = `
+                        <tr class="hover:bg-gray-50 transition duration-150">
+                            <td class="p-4 text-sm text-gray-800 font-medium">${user.email}</td>
+                            <td class="p-4 text-sm text-gray-700">
+                                <span class="p-1 text-xs font-semibold uppercase tracking-wider rounded-md ${roleClass}">
+                                    ${user.role}
+                                </span>
+                            </td>
+                            <!-- Truncate UID for cleaner display -->
+                            <td class="p-4 text-sm font-mono text-gray-500 hidden sm:table-cell">${user.uid.substring(0, 10)}...</td>
+                            <td class="p-4 text-sm ${statusClass}">${status}</td>
+                        </tr>
+                    `;
+                    tableBody.insertAdjacentHTML('beforeend', row);
+                });
+            }
+            
+            // Update the KPI for total active personnel (total, not filtered count)
+            totalEmployeesSpan.textContent = userEmails.length;
+        }
+
+        /**
+         * Initializes the application state on load.
+         */
+        window.onload = function() {
+            renderUserManagementList();
+            renderJobApplicationsList(); 
+        }
+
+    </script>
+</body>
+</html>

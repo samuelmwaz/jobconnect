@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JobConnect - Find & Request Your Next Job</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Load Lucide Icons for aesthetic components -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        /* Custom styles matching the elegant color palette from color pick.jpg */
+        body { font-family: 'Inter', sans-serif; background: linear-gradient(135deg, #4B6382 0%, #071739 100%); }
+        .card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
+        .card:hover { transform: translateY(-4px); box-shadow: 0 20px 40px rgba(7, 23, 57, 0.3); }
+        
+        /* Primary Button Colors (Dark Blue to Slate Blue Gradient) */
+        .btn-primary { background: linear-gradient(135deg, #071739 0%, #4B6382 100%); box-shadow: 0 4px 12px rgba(7, 23, 57, 0.4); } 
+        .btn-primary:hover { background: linear-gradient(135deg, #4B6382 0%, #071739 100%); box-shadow: 0 6px 20px rgba(7, 23, 57, 0.5); }
+        
+        /* Dashboard Navigation Colors */
+        .dashboard-nav a { padding: 12px 16px; border-radius: 10px; margin-bottom: 8px; display: flex; align-items: center; transition: all 0.3s; color: #4B6382; font-weight: 500;}
+        .dashboard-nav a:hover { background-color: #CDD5DB; transform: translateX(4px); }
+        .dashboard-nav .active { background: linear-gradient(135deg, #A4B5C4 0%, #CDD5DB 100%); color: #071739; font-weight: 600; box-shadow: 0 2px 8px rgba(164, 181, 196, 0.3); } 
+        
+        /* STATUS PILLS */
+        .status-pill-Pending { background: linear-gradient(135deg, #E3C39D 0%, #A68868 100%); color: #071739; box-shadow: 0 2px 8px rgba(166, 136, 104, 0.2); } 
+        .status-pill-Viewed { background: linear-gradient(135deg, #CDD5DB 0%, #A4B5C4 100%); color: #071739; box-shadow: 0 2px 8px rgba(164, 181, 196, 0.2); } 
+        .status-pill-Contacting { background: linear-gradient(135deg, #A4B5C4 0%, #4B6382 100%); color: white; box-shadow: 0 2px 8px rgba(75, 99, 130, 0.3); }
+        
+        /* Enhanced card styling */
+        .glass-card { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.3); }
+        
+        /* Smooth animations */
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-fade-in { animation: fadeIn 0.6s ease-out; }
+    </style>
+</head>
+<body class="min-h-screen">
+
+    <!-- Global State Management & Header -->
+    <header class="bg-white shadow-md">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <a href="#home" class="text-3xl font-bold text-gray-800 tracking-tight">JobConnect</a>
+            <nav>
+                <!-- Primary Button: Dark Blue background, Slate Blue hover -->
+                <button id="auth-button" class="btn-primary text-white px-4 py-2 rounded-lg font-semibold transition shadow-md" onclick="handleAuthClick()">
+                    Login / Register
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content Container - Pages will be displayed here -->
+    <main class="container mx-auto p-4 sm:p-6 lg:p-8">
+        <div id="app-container">
+            <!-- Dynamic Content will be injected here -->
+        </div>
+    </main>
+
+    <!-- Modal for Login/Register Prompt (Updated for role selection) -->
+    <div id="auth-modal" class="fixed inset-0 bg-gray-900 bg-opacity-75 hidden items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-xl shadow-2xl p-6 w-full max-w-sm transform transition-all">
+            <h3 class="text-2xl font-bold text-gray-900 mb-4">Select Your Role</h3>
+            <p class="text-gray-600 mb-6">Choose your account type to continue to the platform.</p>
+            <div class="flex flex-col space-y-4">
+                <!-- Primary Button: Job Seeker (Default) -->
+                <button class="w-full btn-primary text-white py-3 rounded-lg font-semibold transition" onclick="mockLogin('seeker')">Log in as Job Seeker</button>
+                <!-- Secondary Button: Employer (New) -->
+                <button class="w-full bg-[#A4B5C4] text-[#071739] py-3 rounded-lg font-semibold hover:bg-[#CDD5DB] transition shadow-md" onclick="mockLogin('employer')">Log in as Employer (TechNova)</button>
+                <button class="w-full bg-gray-200 text-gray-800 py-3 rounded-lg font-semibold hover:bg-gray-300 transition" onclick="hideModal('auth-modal')">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Send Request Confirmation -->
+    <div id="request-modal" class="fixed inset-0 bg-gray-900 bg-opacity-75 hidden items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-xl shadow-2xl p-6 w-full max-w-md transform transition-all">
+            <h3 class="text-2xl font-bold text-gray-900 mb-4">Confirm Job Request</h3>
+            <!-- Link/Accent Color (Tan) for job title highlight -->
+            <p class="text-gray-600 mb-4">Your current profile and attached resume will be sent to the hiring company for **<span id="job-title-confirm" class="font-semibold text-[#A68868]"></span>**.</p>
+            <!-- Warning Box: Beige background, Tan border, Dark Blue Text -->
+            <div class="bg-[#E3C39D] border-l-4 border-[#A68868] p-3 mb-6 rounded-md">
+                <p class="text-sm text-[#071739]">Ensure your <a href="#dashboard/profile" onclick="hideModal('request-modal'); navigate('dashboard/profile')" class="underline font-medium">Profile/Resume</a> is up-to-date before sending!</p>
+            </div>
+            <div class="flex justify-end space-x-3">
+                <button class="bg-gray-200 text-gray-800 px-4 py-2 rounded-lg font-semibold hover:bg-gray-300 transition" onclick="hideModal('request-modal')">Cancel</button>
+                <!-- Secondary Action Button: Slate Blue, no gradient needed here to differentiate from primary -->
+                <button class="bg-[#4B6382] text-white px-4 py-2 rounded-lg font-semibold hover:bg-[#071739] transition shadow-md" onclick="sendRequest()">Send Request Now</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- MOCK DATA & STATE MANAGEMENT ---
+        let isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+        let isEmployer = localStorage.getItem('isEmployer') === 'true'; // New state
+        let currentJobId = null;
+
+        // Mock User Data for demonstration
+        const mockUser = {
+            name: "Alex Johnson",
+            profileStatus: 75,
+            userId: "JC-98345-AJ",
+            lastLogin: new Date().toLocaleDateString(),
+            pendingRequests: 3
+        };
+        
+        // Mock Employer Data for demonstration
+        const mockEmployerUser = {
+            company: "TechNova Solutions",
+            id: "EMP-TECH-001"
+        };
+
+
+        // Mock Jobs Data (Sectors added for filtering)
+        const mockJobs = [
+            { id: 101, title: "Senior Frontend Engineer", company: "TechNova Solutions", location: "Remote (Global)", salary: "$120k - $140k", type: "Full-Time", description: "Develop and maintain user-facing features using modern React frameworks and TypeScript. Work closely with design teams to ensure pixel-perfect implementation and responsive design...", posted: "2 days ago", industry: "Software", sector: "ICT" },
+            { id: 102, title: "Digital Marketing Specialist", company: "BrightSpark Agency", location: "New York, NY", salary: "$70k - $85k", type: "Full-Time", description: "Manage paid social media campaigns and SEO strategy. Analyze performance data and generate actionable insights to improve conversion rates...", posted: "1 week ago", industry: "Marketing", sector: "ICT" },
+            { id: 103, title: "UX Designer", company: "MediFlow Health", location: "Austin, TX", salary: "Competitive", type: "Contract", description: "Design intuitive and accessible user interfaces for our flagship medical record platform. Conduct user research and usability testing...", posted: "3 weeks ago", industry: "Healthcare", sector: "ICT" },
+            { id: 104, title: "Financial Reporting Analyst", company: "Zambezi Capital", location: "Lusaka, Zambia", salary: "ZMW 35k - 45k/mo", type: "Full-Time", description: "Lead the quarterly financial analysis and reporting for the Southern Africa region, ensuring compliance with IFRS standards. Requires strong excel and database skills.", posted: "1 day ago", industry: "Finance", sector: "Infrastructure and Construction" },
+            { id: 105, title: "Agricultural Logistics Coordinator", company: "AgriSupply Co.", location: "Lusaka, Zambia", salary: "ZMW 18k - 25k/mo", type: "Contract", description: "Coordinate the transport and storage of bulk agricultural commodities across Zambia. Must have experience with local transportation networks.", posted: "4 days ago", industry: "Logistics", sector: "Manufacturing" },
+            { id: 106, title: "Mine Safety Officer", company: "Kabwe Copper", location: "Kabwe, Zambia", salary: "ZMW 40k - 50k/mo", type: "Full-Time", description: "Ensure all safety protocols are followed in underground operations.", posted: "1 week ago", industry: "Safety", sector: "Mining" },
+            { id: 107, title: "Hydropower Plant Technician", company: "ZESCO", location: "Kariba Dam, Zambia", salary: "ZMW 25k - 35k/mo", type: "Full-Time", description: "Maintain and repair electromechanical equipment at the generation facility.", posted: "2 weeks ago", industry: "Utilities", sector: "Energy" },
+            { id: 108, title: "Lodge Manager", company: "Mosi-oa-Tunya Safaris", location: "Livingstone, Zambia", salary: "ZMW 20k - 30k/mo", type: "Full-Time", description: "Oversee daily operations of a luxury safari lodge near Victoria Falls.", posted: "3 days ago", industry: "Hospitality", sector: "Tourism" },
+        ];
+
+        // Mock User Requests (updates on application - what the JOB SEEKER sees)
+        let mockRequests = JSON.parse(localStorage.getItem('userRequests')) || [
+            { id: 501, jobId: 101, title: "Senior Frontend Engineer", company: "TechNova Solutions", date: "2024-10-25", status: "Pending" },
+            { id: 502, jobId: 103, title: "UX Designer", company: "MediFlow Health", date: "2024-10-18", status: "Viewed" },
+            { id: 503, jobId: 104, title: "Financial Reporting Analyst", company: "Zambezi Capital", date: "2024-10-10", status: "Contacting" }
+        ];
+        
+        // Mock Employer Requests (what the EMPLOYER sees - only for TechNova Solutions in this demo)
+        let mockEmployerRequests = JSON.parse(localStorage.getItem('employerRequests')) || [
+            { id: 901, applicantName: "Alex Johnson", applicantId: "JC-98345-AJ", jobId: 101, title: "Senior Frontend Engineer", date: "2024-10-25", status: "Pending", resumeScore: 92, match: "High" },
+            { id: 902, applicantName: "Beryl Stone", applicantId: "JC-90011-BS", jobId: 101, title: "Senior Frontend Engineer", date: "2024-10-20", status: "Viewed", resumeScore: 78, match: "Medium" },
+            { id: 903, applicantName: "Chris Pine", applicantId: "JC-11223-CP", jobId: 101, title: "Senior Frontend Engineer", date: "2024-10-18", status: "Contacting", resumeScore: 95, match: "High" },
+            { id: 904, applicantName: "Dana Scully", applicantId: "JC-55555-DS", jobId: 105, title: "Agricultural Logistics Coordinator", date: "2024-10-10", status: "Pending", resumeScore: 88, match: "High" }
+        ];
+
+        // --- CORE UI FUNCTIONS ---
+
+        function handleAuthClick() {
+            if (isLoggedIn) {
+                // If logged in, navigate to the correct dashboard
+                navigate(isEmployer ? 'employer/home' : 'dashboard');
+            } else {
+                // If not logged in, show login modal
+                showModal('auth-modal');
+            }
+        }
+
+        function updateAuthButton() {
+            const button = document.getElementById('auth-button');
+            if (isLoggedIn) {
+                button.textContent = isEmployer ? 'Employer Dashboard' : 'My Dashboard';
+                button.classList.remove('btn-primary'); 
+                button.classList.add('bg-[#4B6382]', 'hover:bg-[#071739]'); 
+            } else {
+                button.textContent = 'Login / Register';
+                button.classList.remove('bg-[#4B6382]', 'hover:bg-[#071739]');
+                button.classList.add('btn-primary');
+            }
+        }
+
+        function showModal(id) {
+            document.getElementById(id).classList.remove('hidden');
+            document.getElementById(id).classList.add('flex');
+        }
+
+        function hideModal(id) {
+            document.getElementById(id).classList.add('hidden');
+            document.getElementById(id).classList.remove('flex');
+        }
+
+        // --- PAGE RENDERING FUNCTIONS ---
+
+        function navigate(hash) {
+            window.location.hash = hash.startsWith('#') ? hash.substring(1) : hash;
+        }
+
+        function renderPage(pageId) {
+            const container = document.getElementById('app-container');
+            container.innerHTML = '';
+            window.scrollTo(0, 0); // Scroll to top on page change
+
+            // Protected pages logic update
+            if (!isLoggedIn && (pageId.startsWith('dashboard') || pageId.startsWith('request') || pageId.startsWith('employer'))) {
+                showModal('auth-modal');
+                return;
+            }
+
+            // Role-based route redirection
+            if (isLoggedIn) {
+                if (isEmployer && pageId.startsWith('dashboard')) {
+                    // Employer trying to access seeker dashboard
+                    navigate('employer/home');
+                    return;
+                }
+                if (!isEmployer && pageId.startsWith('employer')) {
+                    // Seeker trying to access employer dashboard
+                    navigate('dashboard');
+                    return;
+                }
+            }
+
+
+            switch (pageId.split('/')[0]) {
+                case 'job':
+                    const id = parseInt(pageId.split('/')[1]);
+                    currentJobId = id;
+                    renderJobDetails(id);
+                    break;
+                case 'dashboard':
+                    renderDashboard(pageId.split('/')[1] || 'home'); // Job Seeker Dashboard
+                    break;
+                case 'employer':
+                    renderEmployerDashboard(pageId.split('/')[1] || 'home'); // NEW Employer Dashboard
+                    break;
+                case 'home':
+                default:
+                    renderHome();
+                    break;
+            }
+        }
+
+        // 1. HOME PAGE RENDER (No change)
+        function renderHome() {
+            document.getElementById('app-container').innerHTML = `
+                <div class="animate-fade-in">
+                    <div class="text-center py-16 glass-card rounded-xl shadow-lg mb-8">
+                        <h1 class="text-4xl sm:text-5xl font-extrabold text-gray-900 mb-3">Find Your Next Career. Connect Directly.</h1>
+                        <p class="text-xl text-gray-600 mb-8">Register to instantly send your profile as a request to hiring companies.</p>
+
+                        <!-- Search Bar - Adjusted to accommodate the new Sector filter -->
+                        <div class="max-w-5xl mx-auto p-4">
+                            <div class="flex flex-wrap gap-4 items-center justify-center">
+                                <!-- Input -->
+                                <input type="text" id="keyword-search" placeholder="Job Title, Keyword, or Company" class="flex-1 min-w-[200px] p-4 border border-gray-300 rounded-lg focus:ring-[#A68868] focus:border-[#A68868] shadow-sm">
+                                
+                                <!-- Location Dropdown -->
+                                <select id="location-select" class="p-4 border border-gray-300 rounded-lg shadow-sm min-w-[150px]">
+                                    <option value="">Any Location</option>
+                                    <option value="Remote">Remote</option>
+                                    <option value="New York">New York, NY</option>
+                                    <option value="Austin">Austin, TX</option>
+                                    <option value="Lusaka">Lusaka, Zambia</option> 
+                                    <option value="Kabwe">Kabwe, Zambia</option>
+                                    <option value="Livingstone">Livingstone, Zambia</option>
+                                </select>
+                                
+                                <!-- NEW Sector Dropdown -->
+                                <select id="sector-select" class="p-4 border border-gray-300 rounded-lg shadow-sm min-w-[150px]">
+                                    <option value="">Any Sector</option>
+                                    <option value="Mining">Mining</option>
+                                    <option value="Energy">Energy</option>
+                                    <option value="Manufacturing">Manufacturing</option>
+                                    <option value="Infrastructure and Construction">Infrastructure & Construction</option>
+                                    <option value="Tourism">Tourism</option>
+                                    <option value="ICT">ICT</option>
+                                </select>
+
+                                <!-- Primary Button -->
+                                <button onclick="mockSearch()" class="btn-primary text-white p-4 rounded-lg font-bold shadow-lg transition flex-shrink-0 min-w-[150px] flex items-center justify-center">
+                                    <i data-lucide="search" class="w-5 h-5 mr-2"></i> Search
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Value Props -->
+                        <div class="mt-12 grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+                            <div class="p-4 text-center">
+                                <!-- Tan Accent Color -->
+                                <i data-lucide="rocket" class="w-8 h-8 text-[#A68868] mx-auto mb-3"></i>
+                                <h3 class="font-semibold text-lg text-gray-900">1. Instant Requests</h3>
+                                <p class="text-gray-500 text-sm">Send your profile directly to employers with one click.</p>
+                            </div>
+                            <div class="p-4 text-center">
+                                <!-- Tan Accent Color -->
+                                <i data-lucide="shield-check" class="w-8 h-8 text-[#A68868] mx-auto mb-3"></i>
+                                <h3 class="font-semibold text-lg text-gray-900">2. Vetted Listings</h3>
+                                <p class="text-gray-500 text-sm">We ensure all hiring companies are verified for quality.</p>
+                            </div>
+                            <div class="p-4 text-center">
+                                <!-- Tan Accent Color -->
+                                <i data-lucide="star" class="w-8 h-8 text-[#A68868] mx-auto mb-3"></i>
+                                <h3 class="font-semibold text-lg text-gray-900">3. Status Tracking</h3>
+                                <p class="text-gray-500 text-sm">Track when your request is viewed and processed in your dashboard.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h2 class="text-3xl font-bold text-white mb-6">Featured Job Openings</h2>
+                    <div id="job-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        ${mockJobs.map(job => createJobCard(job)).join('')}
+                    </div>
+                </div>
+            `;
+            lucide.createIcons(); // Initialize icons
+        }
+
+        function createJobCard(job) {
+            return `
+                <div class="card glass-card p-6 rounded-xl shadow-md border border-gray-100 cursor-pointer" onclick="navigate('job/${job.id}')">
+                    <div class="flex items-center space-x-3 mb-3">
+                        <!-- Tan Accent Color -->
+                        <span class="text-lg font-semibold text-[#A68868]">${job.company}</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-2">${job.title}</h3>
+                    <div class="text-gray-600 text-sm space-y-1">
+                        <p class="flex items-center"><i data-lucide="map-pin" class="w-4 h-4 mr-2 text-gray-400"></i>${job.location}</p>
+                        <p class="flex items-center"><i data-lucide="tag" class="w-4 h-4 mr-2 text-gray-400"></i>${job.salary}</p>
+                        <!-- Added Sector information to the card for visibility -->
+                        <p class="inline-block bg-gray-100 text-gray-700 text-xs px-2 py-0.5 rounded-full mt-2">${job.type}</p>
+                        <p class="inline-block bg-gray-100 text-[#4B6382] text-xs px-2 py-0.5 rounded-full mt-2 ml-1 font-medium">${job.sector}</p>
+                    </div>
+                    <!-- Tan Accent Link, Dark Blue Hover -->
+                    <a href="#job/${job.id}" class="mt-4 inline-block text-[#A68868] font-medium hover:text-[#071739] transition">View Details &rarr;</a>
+                </div>
+            `;
+        }
+
+        function mockSearch() {
+            // Placeholder function for searching logic
+            const keyword = document.getElementById('keyword-search').value.toLowerCase();
+            const location = document.getElementById('location-select').value;
+            const sector = document.getElementById('sector-select').value; // New filter logic
+
+            console.log(`Searching for: ${keyword} in ${location} in sector ${sector}`);
+
+            let filteredJobs = mockJobs;
+
+            // 1. Filter by Location
+            if (location) {
+                filteredJobs = filteredJobs.filter(job => job.location.includes(location));
+            }
+            
+            // 2. Filter by Sector
+            if (sector) {
+                filteredJobs = filteredJobs.filter(job => job.sector === sector);
+            }
+
+            // 3. Filter by Keyword (Title or Company)
+            if (keyword) {
+                filteredJobs = filteredJobs.filter(job => 
+                    job.title.toLowerCase().includes(keyword) || 
+                    job.company.toLowerCase().includes(keyword)
+                );
+            }
+            
+            // Update the job list display
+            document.getElementById('job-list').innerHTML = `
+                <div class="md:col-span-2 lg:col-span-3">
+                    <h3 class="text-xl font-semibold mb-4 text-white">Search Results for: "${keyword || 'All Jobs'}" ${location ? `in ${location}` : ''} ${sector ? `in the ${sector} sector` : ''}</h3>
+                </div>
+                ${filteredJobs.map(job => createJobCard(job)).join('')}
+                <div class="md:col-span-2 lg:col-span-3 text-center pt-4">
+                    <p class="text-gray-300">Showing ${filteredJobs.length} of ${mockJobs.length} total results.</p>
+                </div>
+            `;
+            lucide.createIcons();
+        }
+
+        // 2. JOB DETAILS PAGE RENDER (No change)
+        function renderJobDetails(id) {
+            const job = mockJobs.find(j => j.id === id);
+            if (!job) {
+                // Tan accent for error text
+                document.getElementById('app-container').innerHTML = `<div class="p-8 text-center glass-card rounded-xl shadow-lg animate-fade-in"><h2 class="text-3xl font-bold text-[#A68868]">Job Not Found</h2><p class="mt-2 text-gray-600">The requested job listing could not be located.</p><button onclick="navigate('home')" class="mt-6 btn-primary text-white px-4 py-2 rounded-lg">Go Home</button></div>`;
+                return;
+            }
+
+            document.getElementById('app-container').innerHTML = `
+                <div class="animate-fade-in">
+                    <!-- Tan Accent Link, Dark Blue Hover -->
+                    <button onclick="navigate('home')" class="text-[#A68868] hover:text-white font-medium mb-6 flex items-center transition">
+                        <i data-lucide="arrow-left" class="w-4 h-4 mr-2"></i> Back to Search
+                    </button>
+
+                    <div class="glass-card rounded-xl shadow-lg p-6 lg:p-10 grid grid-cols-1 lg:col-span-3 gap-8">
+                        <!-- Left Column: Job Content -->
+                        <div class="lg:col-span-2">
+                            <h1 class="text-4xl font-extrabold text-gray-900 mb-2">${job.title}</h1>
+                            <!-- Tan Accent Color -->
+                            <h2 class="text-2xl font-semibold text-[#A68868] mb-6">${job.company} - ${job.location}</h2>
+
+                            <div class="flex flex-wrap gap-4 mb-8 text-sm font-medium">
+                                <span class="flex items-center bg-gray-100 p-2 rounded-full"><i data-lucide="briefcase" class="w-4 h-4 mr-2 text-gray-400"></i>${job.type}</span>
+                                <span class="flex items-center bg-gray-100 p-2 rounded-full"><i data-lucide="dollar-sign" class="w-4 h-4 mr-2 text-gray-400"></i>${job.salary}</span>
+                                <span class="flex items-center bg-gray-100 p-2 rounded-full"><i data-lucide="banknote" class="w-4 h-4 mr-2 text-gray-400"></i>Sector: ${job.sector}</span>
+                                <span class="flex items-center bg-gray-100 p-2 rounded-full"><i data-lucide="calendar" class="w-4 h-4 mr-2 text-gray-400"></i>Posted ${job.posted}</span>
+                            </div>
+
+                            <div class="prose max-w-none text-gray-700">
+                                <h3 class="text-2xl font-bold mt-8 mb-3">Job Summary</h3>
+                                <p>${job.description}</p>
+                                <h3 class="text-2xl font-bold mt-8 mb-3">Key Responsibilities</h3>
+                                <ul class="list-disc list-inside space-y-2 ml-4">
+                                    <li>Develop and integrate features following best practices.</li>
+                                    <li>Participate in code reviews and architectural discussions.</li>
+                                    <li>Collaborate with cross-functional teams (Design, Product).</li>
+                                    <li>Ensure high performance and responsiveness of the application.</li>
+                                </ul>
+                                <h3 class="text-2xl font-bold mt-8 mb-3">Qualifications</h3>
+                                <ul class="list-disc list-inside space-y-2 ml-4">
+                                    <li>Bachelor's degree in Computer Science or related field.</li>
+                                    <li>5+ years of experience in ${job.industry} development.</li>
+                                    <li>Proficiency in ${job.industry === 'Software' ? 'React, TypeScript, and Tailwind CSS' : 'relevant tools and technologies'}.</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Right Column: Action Panel -->
+                        <div class="lg:col-span-1">
+                            <div class="sticky top-4 bg-gray-50 p-6 rounded-xl border border-gray-200 shadow-inner">
+                                <p class="text-lg font-semibold text-gray-800 mb-4">${isLoggedIn ? 'Ready to connect?' : 'Login to apply directly.'}</p>
+                                <!-- Primary Button (uses btn-primary gradient) -->
+                                <button id="request-job-btn" class="w-full btn-primary text-white py-3 rounded-lg text-lg font-bold transition shadow-lg" onclick="handleRequestClick('${job.title}')">
+                                    <i data-lucide="mail" class="w-5 h-5 inline mr-2"></i> Send Request to Employer
+                                </button>
+                                <button class="w-full mt-3 bg-gray-200 text-gray-800 py-3 rounded-lg text-lg font-semibold hover:bg-gray-300 transition">
+                                    <i data-lucide="bookmark" class="w-5 h-5 inline mr-2"></i> Save Job
+                                </button>
+
+                                <div class="mt-6 pt-4 border-t border-gray-200">
+                                    <h4 class="font-semibold mb-2">Company Overview</h4>
+                                    <p class="text-sm text-gray-600">${job.company} is a leading player in the **${job.industry}** sector, known for its innovative approach and supportive culture.</p>
+                                    <!-- Tan Accent Link, Dark Blue Hover -->
+                                    <a href="#" class="text-[#A68868] text-sm mt-2 block hover:text-[#071739]">View Company Profile &rarr;</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            lucide.createIcons();
+        }
+
+        function handleRequestClick(jobTitle) {
+            if (isLoggedIn) {
+                if (isEmployer) {
+                    alertUser("You are logged in as an Employer and cannot apply for jobs.", 'red');
+                    return;
+                }
+                // Set the job title in the confirmation modal
+                document.getElementById('job-title-confirm').textContent = jobTitle;
+                showModal('request-modal');
+            } else {
+                showModal('auth-modal');
+            }
+        }
+
+        function sendRequest() {
+            hideModal('request-modal');
+            const job = mockJobs.find(j => j.id === currentJobId);
+
+            if (mockRequests.find(req => req.jobId === currentJobId)) {
+                // Uses the 'red' (warning) alert type
+                alertUser("You have already sent a request for this job.", 'red');
+                return;
+            }
+
+            // Simulate sending request for Job Seeker
+            const newRequest = {
+                id: Date.now(),
+                jobId: currentJobId,
+                title: job.title,
+                company: job.company,
+                date: new Date().toLocaleDateString('en-US'),
+                status: "Pending"
+            };
+            mockRequests.unshift(newRequest);
+            localStorage.setItem('userRequests', JSON.stringify(mockRequests));
+            
+            // Simulate receiving request for Employer (if the company is TechNova)
+            if (job.company === mockEmployerUser.company) {
+                 const newEmployerRequest = {
+                    id: Date.now() + 1,
+                    applicantName: mockUser.name,
+                    applicantId: mockUser.userId,
+                    jobId: currentJobId,
+                    title: job.title,
+                    date: new Date().toLocaleDateString('en-US'),
+                    status: "Pending",
+                    resumeScore: Math.floor(Math.random() * (99 - 70 + 1)) + 70,
+                    match: "High" 
+                };
+                mockEmployerRequests.unshift(newEmployerRequest);
+                localStorage.setItem('employerRequests', JSON.stringify(mockEmployerRequests));
+            }
+
+
+            // Redirect to dashboard with success message
+            navigate('dashboard/requests');
+            setTimeout(() => {
+                alertUser(`Success! Your request for "${job.title}" has been sent to ${job.company}.`, 'green');
+            }, 50);
+
+        }
+
+        // 3. JOB SEEKER DASHBOARD RENDER (No change)
+        function renderDashboard(subPage = 'home') {
+            document.getElementById('app-container').innerHTML = `
+                <div class="animate-fade-in grid grid-cols-1 lg:grid-cols-4 gap-8">
+                    <!-- Dashboard Sidebar -->
+                    <div class="lg:col-span-1 glass-card p-6 rounded-xl shadow-lg h-min">
+                        <div class="text-center mb-6 border-b pb-4">
+                            <h3 class="text-xl font-bold text-gray-900">${mockUser.name}</h3>
+                            <p class="text-sm text-gray-500">Job Seeker ID: ${mockUser.userId}</p>
+                        </div>
+                        <nav class="dashboard-nav">
+                            <a href="#dashboard/home" class="${subPage === 'home' ? 'active' : ''}" onclick="navigate('dashboard/home')"><i data-lucide="layout-dashboard" class="w-5 h-5 mr-2"></i> Overview</a>
+                            <a href="#dashboard/requests" class="${subPage === 'requests' ? 'active' : ''}" onclick="navigate('dashboard/requests')"><i data-lucide="mail-check" class="w-5 h-5 mr-2"></i> My Requests</a>
+                            <a href="#dashboard/profile" class="${subPage === 'profile' ? 'active' : ''}" onclick="navigate('dashboard/profile')"><i data-lucide="user" class="w-5 h-5 mr-2"></i> My Profile</a>
+                            <a href="#dashboard/settings" class="${subPage === 'settings' ? 'active' : ''}" onclick="navigate('dashboard/settings')"><i data-lucide="settings" class="w-5 h-5 mr-2"></i> Settings</a>
+                            <!-- Tan Accent Text for Logout -->
+                            <a href="#" onclick="mockLogout()" class="text-[#A68868] hover:text-[#071739] mt-4"><i data-lucide="log-out" class="w-5 h-5 mr-2"></i> Logout</a>
+                        </nav>
+                    </div>
+
+                    <!-- Dashboard Main Content -->
+                    <div class="lg:col-span-3">
+                        <h2 class="text-3xl font-bold text-white mb-6">${formatDashboardTitle(subPage)}</h2>
+                        <div id="dashboard-content">
+                            ${renderDashboardContent(subPage)}
+                        </div>
+                    </div>
+                </div>
+            `;
+            lucide.createIcons();
+        }
+
+        function formatDashboardTitle(subPage) {
+            switch(subPage) {
+                case 'requests': return 'My Job Requests (Status Tracker)';
+                case 'profile': return 'Manage My Profile & Resume';
+                case 'settings': return 'Account Settings';
+                case 'home':
+                default: return 'Job Seeker Overview';
+            }
+        }
+
+        function renderDashboardContent(subPage) {
+            // ... (Job Seeker Content remains the same)
+            switch(subPage) {
+                case 'requests':
+                    return `
+                        <div class="glass-card p-6 rounded-xl shadow-lg">
+                            <p class="text-gray-600 mb-6">Track the status of your direct requests sent to employers.</p>
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full divide-y divide-gray-200">
+                                    <thead>
+                                        <tr>
+                                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Job Title</th>
+                                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Company</th>
+                                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date Sent</th>
+                                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="bg-white/80 divide-y divide-gray-200">
+                                        ${mockRequests.map(req => `
+                                            <tr>
+                                                <td class="px-4 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${req.title}</td>
+                                                <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-600">${req.company}</td>
+                                                <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-600">${req.date}</td>
+                                                <td class="px-4 py-4 whitespace-nowrap">
+                                                    <span class="status-pill-${req.status} inline-flex items-center px-3 py-1 text-xs font-semibold rounded-full">${req.status}</span>
+                                                </td>
+                                                <td class="px-4 py-4 whitespace-nowrap text-sm font-medium">
+                                                    <!-- Tan Accent Link, Dark Blue Hover -->
+                                                    <a href="#job/${req.jobId}" class="text-[#A68868] hover:text-[#071739] transition">View Job</a>
+                                                </td>
+                                            </tr>
+                                        `).join('')}
+                                    </tbody>
+                                </table>
+                                ${mockRequests.length === 0 ? '<p class="text-center py-6 text-gray-500">You have no active requests. Start searching for jobs!</p>' : ''}
+                            </div>
+                        </div>
+                    `;
+                case 'profile':
+                    return `
+                        <div class="glass-card p-6 rounded-xl shadow-lg">
+                            <h3 class="text-xl font-bold mb-4">Profile Completion: ${mockUser.profileStatus}%</h3>
+                            <div class="w-full bg-gray-200 rounded-full h-2.5 mb-4">
+                                <!-- Dark Blue for completion bar -->
+                                <div class="bg-[#071739] h-2.5 rounded-full" style="width: ${mockUser.profileStatus}%"></div>
+                            </div>
+                            <p class="text-gray-600 mb-6">Your profile is the resume sent to employers. Keep it updated!</p>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <input type="text" placeholder="Full Name" value="${mockUser.name}" class="p-3 border border-gray-300 rounded-lg">
+                                <input type="email" placeholder="Email Address" value="alex@example.com" class="p-3 border border-gray-300 rounded-lg">
+                            </div>
+                            <textarea placeholder="Professional Summary (500 chars max)" rows="4" class="w-full p-3 border border-gray-300 rounded-lg mt-6">Experienced frontend developer focused on scalable and maintainable UI architecture...</textarea>
+                            
+                            <h4 class="text-lg font-semibold mt-6 mb-3">Resume Upload</h4>
+                            <div class="border-2 border-dashed border-gray-300 p-6 rounded-lg text-center">
+                                <input type="file" id="resume-upload" class="hidden" accept=".pdf,.doc,.docx">
+                                <!-- Tan Accent Link, Dark Blue Hover -->
+                                <label for="resume-upload" class="cursor-pointer text-[#A68868] font-medium hover:text-[#071739]">Click to upload your resume (PDF, DOCX)</label>
+                                <p class="text-sm text-gray-500 mt-1">Current File: my-latest-resume.pdf</p>
+                            </div>
+                            
+                            <!-- Primary Button (uses btn-primary gradient) -->
+                            <button class="btn-primary text-white py-3 px-6 rounded-lg font-bold mt-6 hover:bg-[#4B6382] transition" onclick="alertUser('Profile data saved!', 'green')">Save Profile</button>
+                        </div>
+                    `;
+                case 'settings':
+                    return `
+                        <div class="glass-card p-6 rounded-xl shadow-lg">
+                            <h3 class="text-xl font-bold mb-4">Notification Preferences</h3>
+                            <div class="flex items-center justify-between py-3 border-b">
+                                <span class="text-gray-700">Email updates on Request Status changes</span>
+                                <!-- Tan Accent Checkbox -->
+                                <input type="checkbox" checked class="form-checkbox h-5 w-5 text-[#A68868] rounded">
+                            </div>
+                            <div class="flex items-center justify-between py-3">
+                                <span class="text-gray-700">Weekly Job Recommendation Digest</span>
+                                <!-- Tan Accent Checkbox -->
+                                <input type="checkbox" class="form-checkbox h-5 w-5 text-[#A68868] rounded">
+                            </div>
+                            <!-- Primary Button (uses btn-primary gradient) -->
+                            <button class="btn-primary text-white py-3 px-6 rounded-lg font-bold mt-6 hover:bg-[#4B6382] transition" onclick="alertUser('Settings saved!', 'green')">Update Settings</button>
+
+                            <!-- Danger Zone: Tan Accent Text/Button -->
+                            <h3 class="text-xl font-bold mt-10 mb-4 text-[#A68868]">Danger Zone</h3>
+                            <!-- Tan Button, Beige/Dark Blue Text Hover -->
+                            <button class="bg-[#A68868] text-white py-3 px-6 rounded-lg font-bold hover:bg-[#E3C39D] hover:text-[#071739] transition shadow-md" onclick="confirmDeleteAccount()">Delete Account</button>
+                        </div>
+                    `;
+                case 'home':
+                default:
+                    return `
+                        <div>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                                <!-- Stat 1: Dark Blue -->
+                                <div class="card bg-[#071739] text-white p-6 rounded-xl shadow-md">
+                                    <p class="text-sm opacity-75">Requests Sent</p>
+                                    <p class="text-4xl font-bold mt-1">${mockRequests.length}</p>
+                                </div>
+                                <!-- Stat 2: Slate Blue -->
+                                <div class="card bg-[#4B6382] text-white p-6 rounded-xl shadow-md">
+                                    <p class="text-sm opacity-75">Employers Viewed</p>
+                                    <p class="text-4xl font-bold mt-1">${mockRequests.filter(r => r.status === 'Viewed' || r.status === 'Contacting').length}</p>
+                                </div>
+                                <!-- Stat 3: Beige/Light Tan with Dark Blue Text -->
+                                <div class="card bg-[#E3C39D] text-[#071739] p-6 rounded-xl shadow-md">
+                                    <p class="text-sm opacity-75">Jobs Saved</p>
+                                    <p class="text-4xl font-bold mt-1">12</p>
+                                </div>
+                            </div>
+
+                            <div class="glass-card p-6 rounded-xl shadow-lg mb-8">
+                                <!-- Action Needed Icon: Tan Accent -->
+                                <h3 class="text-xl font-bold mb-4 flex items-center"><i data-lucide="bell" class="w-5 h-5 mr-2 text-[#A68868]"></i> Action Needed: Profile</h3>
+                                <p class="text-gray-600">Your profile is **${mockUser.profileStatus}% complete**. We recommend completing it to increase your chances of getting contacted.</p>
+                                <!-- Action Button: Beige/Dark Blue Text, Tan Hover/White Text -->
+                                <button onclick="navigate('dashboard/profile')" class="mt-4 bg-[#E3C39D] text-[#071739] px-4 py-2 rounded-lg font-semibold hover:bg-[#A68868] hover:text-white transition shadow-md">Complete Profile</button>
+                            </div>
+
+                            <h3 class="text-2xl font-bold text-white mb-4">Latest Request Status</h3>
+                            <div class="glass-card p-6 rounded-xl shadow-lg">
+                                ${mockRequests.length > 0 ? `
+                                    <p class="text-gray-700 mb-2">Your latest request (${mockRequests[0].title}) has status:</p>
+                                    <span class="status-pill-${mockRequests[0].status} inline-flex items-center px-4 py-2 text-sm font-semibold rounded-full">${mockRequests[0].status}</span>
+                                    <!-- Tan Accent Link, Dark Blue Hover -->
+                                    <button onclick="navigate('dashboard/requests')" class="ml-4 text-[#A68868] hover:text-[#071739] font-medium">View All Requests &rarr;</button>
+                                ` : `<p class="text-gray-500">You haven't sent any requests yet. Time to start searching!</p>`}
+                            </div>
+                        </div>
+                    `;
+            }
+        }
+        
+        // 4. EMPLOYER DASHBOARD RENDER (NEW)
+        function renderEmployerDashboard(subPage = 'home') {
+            const employerUser = {
+                company: "TechNova Solutions",
+                postedJobs: mockJobs.filter(j => j.company === "TechNova Solutions").length,
+                totalRequests: mockEmployerRequests.length,
+                interviewing: mockEmployerRequests.filter(r => r.status === "Contacting").length,
+                newRequests: mockEmployerRequests.filter(r => r.status === "Pending").length,
+            };
+
+            document.getElementById('app-container').innerHTML = `
+                <div class="animate-fade-in grid grid-cols-1 lg:grid-cols-4 gap-8">
+                    <!-- Employer Sidebar -->
+                    <div class="lg:col-span-1 glass-card p-6 rounded-xl shadow-lg h-min">
+                        <div class="text-center mb-6 border-b pb-4">
+                            <h3 class="text-xl font-bold text-gray-900">${employerUser.company}</h3>
+                            <p class="text-sm text-gray-500">Employer Console</p>
+                        </div>
+                        <nav class="dashboard-nav">
+                            <!-- Dashboard Navigation using 'employer' prefix -->
+                            <a href="#employer/home" class="${subPage === 'home' ? 'active' : ''}" onclick="navigate('employer/home')"><i data-lucide="building" class="w-5 h-5 mr-2"></i> Overview</a>
+                            <a href="#employer/requests" class="${subPage === 'requests' ? 'active' : ''}" onclick="navigate('employer/requests')"><i data-lucide="inbox" class="w-5 h-5 mr-2"></i> Incoming Requests</a>
+                            <a href="#employer/jobs" class="${subPage === 'jobs' ? 'active' : ''}" onclick="navigate('employer/jobs')"><i data-lucide="list-checks" class="w-5 h-5 mr-2"></i> Manage Job Posts</a>
+                            <a href="#employer/settings" class="${subPage === 'settings' ? 'active' : ''}" onclick="navigate('employer/settings')"><i data-lucide="settings" class="w-5 h-5 mr-2"></i> Settings</a>
+                            <a href="#" onclick="mockLogout()" class="text-[#A68868] hover:text-[#071739] mt-4"><i data-lucide="log-out" class="w-5 h-5 mr-2"></i> Logout</a>
+                        </nav>
+                    </div>
+
+                    <!-- Employer Main Content -->
+                    <div class="lg:col-span-3">
+                        <h2 class="text-3xl font-bold text-white mb-6">${formatEmployerDashboardTitle(subPage)}</h2>
+                        <div id="employer-content">
+                            ${renderEmployerDashboardContent(subPage, employerUser)}
+                        </div>
+                    </div>
+                </div>
+            `;
+            lucide.createIcons();
+        }
+
+        function formatEmployerDashboardTitle(subPage) {
+            switch(subPage) {
+                case 'requests': return 'Incoming Job Requests';
+                case 'jobs': return 'Manage Job Posts';
+                case 'settings': return 'Company Settings';
+                case 'home':
+                default: return 'Employer Overview';
+            }
+        }
+
+        function updateRequestStatus(requestId, newStatus) {
+            const requestIndex = mockEmployerRequests.findIndex(r => r.id === requestId);
+            if (requestIndex !== -1) {
+                mockEmployerRequests[requestIndex].status = newStatus;
+                localStorage.setItem('employerRequests', JSON.stringify(mockEmployerRequests));
+                
+                // Also update the job seeker's status if they are Alex Johnson (our mock seeker)
+                const seekerRequestIndex = mockRequests.findIndex(r => r.jobId === mockEmployerRequests[requestIndex].jobId && r.company === mockEmployerUser.company);
+                if (seekerRequestIndex !== -1) {
+                    mockRequests[seekerRequestIndex].status = newStatus;
+                    localStorage.setItem('userRequests', JSON.stringify(mockRequests));
+                }
+
+                // Re-render the requests page to reflect the change
+                navigate('employer/requests');
+                alertUser(`Request for ${mockEmployerRequests[requestIndex].applicantName} updated to ${newStatus}.`, 'green');
+            }
+        }
+
+        function renderEmployerDashboardContent(subPage, employerUser) {
+            switch(subPage) {
+                case 'requests':
+                    return `
+                        <div class="glass-card p-6 rounded-xl shadow-lg">
+                            <p class="text-gray-600 mb-6">Review applicants who have sent direct requests to your job listings.</p>
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full divide-y divide-gray-200">
+                                    <thead>
+                                        <tr>
+                                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Applicant</th>
+                                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Job Applied For</th>
+                                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Match Score</th>
+                                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="bg-white/80 divide-y divide-gray-200">
+                                        ${mockEmployerRequests.map(req => `
+                                            <tr>
+                                                <td class="px-4 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${req.applicantName}</td>
+                                                <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-600">${req.title}</td>
+                                                <td class="px-4 py-4 whitespace-nowrap text-sm">
+                                                    <span class="font-bold text-[#4B6382]">${req.resumeScore}%</span> (${req.match})
+                                                </td>
+                                                <td class="px-4 py-4 whitespace-nowrap">
+                                                    <span class="status-pill-${req.status} inline-flex items-center px-3 py-1 text-xs font-semibold rounded-full">${req.status}</span>
+                                                </td>
+                                                <td class="px-4 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                                                    <!-- Dark Blue Button (View/Viewed) -->
+                                                    <button class="bg-[#071739] text-white px-3 py-1 text-xs rounded-full hover:bg-[#4B6382] transition" onclick="updateRequestStatus(${req.id}, 'Viewed')">View Resume</button>
+                                                    <!-- Tan Button (Contacting) -->
+                                                    <button class="bg-[#A68868] text-white px-3 py-1 text-xs rounded-full hover:bg-[#E3C39D] hover:text-[#071739] transition" onclick="updateRequestStatus(${req.id}, 'Contacting')">Contact</button>
+                                                </td>
+                                            </tr>
+                                        `).join('')}
+                                    </tbody>
+                                </table>
+                            </div>
+                            ${mockEmployerRequests.length === 0 ? '<p class="text-center py-6 text-gray-500">No incoming requests yet.</p>' : ''}
+                        </div>
+                    `;
+                case 'jobs':
+                    const employerJobs = mockJobs.filter(j => j.company === employerUser.company);
+                    return `
+                        <div class="glass-card p-6 rounded-xl shadow-lg">
+                            <div class="flex justify-between items-center mb-6">
+                                <h3 class="text-xl font-bold">Your Active Job Posts (${employerJobs.length})</h3>
+                                <button class="btn-primary text-white px-4 py-2 rounded-lg font-semibold transition" onclick="alertUser('New Job Post form opened!', 'yellow')">
+                                    <i data-lucide="plus" class="w-4 h-4 inline mr-1"></i> Post New Job
+                                </button>
+                            </div>
+                            
+                            <div class="space-y-4">
+                                ${employerJobs.map(job => `
+                                    <div class="p-4 border border-gray-200 rounded-lg flex justify-between items-center bg-white/70 card">
+                                        <div>
+                                            <p class="text-lg font-semibold text-gray-900">${job.title}</p>
+                                            <p class="text-sm text-gray-500">${job.location} | ${job.type}</p>
+                                        </div>
+                                        <div class="flex items-center space-x-3">
+                                            <span class="text-gray-700 font-medium">${mockEmployerRequests.filter(r => r.jobId === job.id).length} Requests</span>
+                                            <!-- Tan Accent Link -->
+                                            <a href="#job/${job.id}" class="text-[#A68868] hover:text-[#071739] font-medium transition">View Listing</a>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+                case 'settings':
+                    return `
+                        <div class="glass-card p-6 rounded-xl shadow-lg">
+                            <h3 class="text-xl font-bold mb-4">Company Details</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <input type="text" placeholder="Company Name" value="${employerUser.company}" class="p-3 border border-gray-300 rounded-lg">
+                                <input type="email" placeholder="Hiring Email" value="hiring@technovasol.com" class="p-3 border border-gray-300 rounded-lg">
+                            </div>
+                            <textarea placeholder="Company Description" rows="4" class="w-full p-3 border border-gray-300 rounded-lg mt-6">TechNova Solutions is a global IT consultancy specializing in cloud infrastructure and modern web development.</textarea>
+                            
+                            <!-- Primary Button -->
+                            <button class="btn-primary text-white py-3 px-6 rounded-lg font-bold mt-6 hover:bg-[#4B6382] transition" onclick="alertUser('Company details saved!', 'green')">Save Details</button>
+                        </div>
+                    `;
+                case 'home':
+                default:
+                    return `
+                        <div>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                                <!-- Stat 1: Dark Blue -->
+                                <div class="card bg-[#071739] text-white p-6 rounded-xl shadow-md">
+                                    <p class="text-sm opacity-75">Total Requests</p>
+                                    <p class="text-4xl font-bold mt-1">${employerUser.totalRequests}</p>
+                                </div>
+                                <!-- Stat 2: Slate Blue -->
+                                <div class="card bg-[#4B6382] text-white p-6 rounded-xl shadow-md">
+                                    <p class="text-sm opacity-75">New Candidates (Pending)</p>
+                                    <p class="text-4xl font-bold mt-1">${employerUser.newRequests}</p>
+                                </div>
+                                <!-- Stat 3: Beige/Light Tan with Dark Blue Text -->
+                                <div class="card bg-[#E3C39D] text-[#071739] p-6 rounded-xl shadow-md">
+                                    <p class="text-sm opacity-75">Interviewing</p>
+                                    <p class="text-4xl font-bold mt-1">${employerUser.interviewing}</p>
+                                </div>
+                            </div>
+
+                            <div class="glass-card p-6 rounded-xl shadow-lg mb-8">
+                                <!-- Action Needed Icon: Tan Accent -->
+                                <h3 class="text-xl font-bold mb-4 flex items-center"><i data-lucide="inbox" class="w-5 h-5 mr-2 text-[#A68868]"></i> Unreviewed Requests</h3>
+                                <p class="text-gray-600">You have **${employerUser.newRequests} new requests** across your active job posts. Review them now to find your next hire!</p>
+                                <!-- Action Button: Primary Gradient -->
+                                <button onclick="navigate('employer/requests')" class="mt-4 btn-primary text-white px-4 py-2 rounded-lg font-semibold transition shadow-md">Review Candidates &rarr;</button>
+                            </div>
+                            
+                            <h3 class="text-2xl font-bold text-white mb-4">Job Posting Summary</h3>
+                            <div class="glass-card p-6 rounded-xl shadow-lg">
+                                <p class="text-gray-700 mb-2">You currently have **${employerUser.postedJobs} active job listings**.</p>
+                                <!-- Tan Accent Link -->
+                                <button onclick="navigate('employer/jobs')" class="ml-4 text-[#A68868] hover:text-[#071739] font-medium">Manage Job Posts &rarr;</button>
+                            </div>
+                        </div>
+                    `;
+            }
+        }
+
+        // --- AUTH & MISC FUNCTIONS ---
+
+        function mockLogin(role) {
+            isLoggedIn = true;
+            if (role === 'employer') {
+                isEmployer = true;
+                localStorage.setItem('isEmployer', 'true');
+                navigate('employer/home');
+            } else {
+                isEmployer = false;
+                localStorage.setItem('isEmployer', 'false');
+                navigate('dashboard');
+            }
+            localStorage.setItem('isLoggedIn', 'true');
+            hideModal('auth-modal');
+            updateAuthButton();
+        }
+
+        function mockLogout() {
+            isLoggedIn = false;
+            isEmployer = false;
+            localStorage.removeItem('isLoggedIn');
+            localStorage.removeItem('isEmployer');
+            localStorage.removeItem('userRequests'); 
+            localStorage.removeItem('employerRequests');
+            mockRequests = [];
+            mockEmployerRequests = [
+                // Resetting mock employer data on logout for demo
+                { id: 901, applicantName: "Alex Johnson", applicantId: "JC-98345-AJ", jobId: 101, title: "Senior Frontend Engineer", date: "2024-10-25", status: "Pending", resumeScore: 92, match: "High" },
+                { id: 902, applicantName: "Beryl Stone", applicantId: "JC-90011-BS", jobId: 101, title: "Senior Frontend Engineer", date: "2024-10-20", status: "Viewed", resumeScore: 78, match: "Medium" },
+                { id: 903, applicantName: "Chris Pine", applicantId: "JC-11223-CP", jobId: 101, title: "Senior Frontend Engineer", date: "2024-10-18", status: "Contacting", resumeScore: 95, match: "High" },
+                { id: 904, applicantName: "Dana Scully", applicantId: "JC-55555-DS", jobId: 105, title: "Agricultural Logistics Coordinator", date: "2024-10-10", status: "Pending", resumeScore: 88, match: "High" }
+            ];
+            updateAuthButton();
+            navigate('home');
+            alertUser('You have been logged out.', 'yellow');
+        }
+
+        function alertUser(message, type) {
+            // Simple notification system - replaces alert()
+            const existingAlert = document.getElementById('custom-alert');
+            if (existingAlert) existingAlert.remove();
+
+            // Custom color definitions based on new palette
+            const bgColor = type === 'green' ? 'bg-[#CDD5DB] border-[#4B6382] text-[#071739]' : // Success (Light Blue-Gray, Slate Border, Dark Blue Text)
+                            type === 'red' ? 'bg-[#E3C39D] border-[#A68868] text-[#071739]' :  // Error (Beige, Tan Border, Dark Blue Text)
+                            'bg-[#E3C39D] border-[#A68868] text-[#071739]'; // Yellow/Info (Beige, Tan Border, Dark Blue Text)
+
+            const alertDiv = document.createElement('div');
+            alertDiv.id = 'custom-alert';
+            // Apply fade-in animation
+            alertDiv.className = `fixed top-5 right-5 z-50 p-4 border-l-4 rounded-lg shadow-xl animate-fade-in ${bgColor}`;
+            alertDiv.innerHTML = `
+                <div class="flex items-center">
+                    <i data-lucide="${type === 'green' ? 'check-circle' : 'alert-triangle'}" class="w-5 h-5 mr-3"></i>
+                    <p class="font-medium text-sm">${message}</p>
+                </div>
+            `;
+            document.body.appendChild(alertDiv);
+            lucide.createIcons();
+
+            setTimeout(() => {
+                // Use opacity transition for smooth removal
+                alertDiv.classList.add('opacity-0', 'transition', 'duration-500');
+                setTimeout(() => alertDiv.remove(), 500);
+            }, 5000);
+        }
+
+        function confirmDeleteAccount() {
+            // In a real app, this would open a confirmation modal.
+            // Simplified for the immersive environment.
+            alertUser("Account deletion simulated.", 'red');
+            mockLogout();
+        }
+
+
+        // --- INITIALIZATION ---
+        
+        // Router function handles hash changes
+        const hashChangeHandler = () => {
+            const hash = window.location.hash.substring(1) || 'home';
+            renderPage(hash);
+            updateAuthButton();
+        };
+
+        // Event listeners
+        window.addEventListener('hashchange', hashChangeHandler);
+        window.onload = () => {
+            // Ensure icons are created after dynamic content is added
+            lucide.createIcons();
+            // Initial render based on URL hash
+            hashChangeHandler();
+        };
+
+    </script>
+</body>
+</html>

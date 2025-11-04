@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>job-connect</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles for the app container */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #071739; /* Deep blue from palette */
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .page-view {
+            max-width: 90%;
+            width: 100%;
+            margin: 3rem auto;
+            background-color: #A4B5C4; /* Light blue from palette */
+            min-height: 50vh;
+        }
+        /* Custom spinner for better visual feedback */
+        .loading-spinner {
+            border-top-color: transparent !important;
+            border-right-color: transparent !important;
+            animation: spin 0.6s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Loading Overlay -->
+    <div id="loading-view" class="fixed inset-0 bg-gray-50 flex items-center justify-center z-50">
+        <div class="flex items-center space-x-3 p-6 rounded-xl shadow-lg bg-white">
+            <div class="loading-spinner w-8 h-8 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
+            <p class="text-xl font-medium text-indigo-700">Loading job-connect...</p>
+        </div>
+    </div>
+
+    <!-- Header Navigation -->
+    <header>
+        <nav class="bg-white shadow-lg">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between h-16">
+                    <div class="flex items-center">
+                        <!-- Logo/Title -->
+                        <a href="#" onclick="showPage('home')" class="text-2xl font-bold text-indigo-600">job-connect</a>
+                    </div>
+                    <div id="nav-links" class="flex items-center space-x-4">
+                        
+                        <!-- Logged-in Links -->
+                        <div id="user-dashboard-buttons" class="hidden flex items-center space-x-4">
+                            <!-- Role Display -->
+                            <span id="user-role-display" class="px-3 py-2 text-sm font-semibold text-gray-700 rounded-full border border-gray-200"></span>
+                            <!-- Dashboard Button -->
+                            <button onclick="showUserDashboard()" class="nav-button border-b-2 border-transparent text-gray-700 hover:text-indigo-600 hover:border-indigo-300 px-3 py-2 text-sm font-medium transition duration-150">My Dashboard</button>
+                            <!-- Logout Button -->
+                            <button onclick="logout()" class="nav-button bg-[#4B6382] text-white hover:bg-[#071739] py-2 px-4 rounded-lg text-sm font-medium transition duration-150 shadow-md">Logout</button>
+                        </div>
+                        
+                        <!-- Authentication Buttons (Logged-out) -->
+                        <div id="auth-buttons" class="flex">
+                            <button onclick="showPage('auth')" class="nav-button bg-[#4B6382] text-white hover:bg-[#071739] py-2 px-4 rounded-lg text-sm font-medium transition duration-150 shadow-md">Sign In / Register</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="flex-grow flex flex-col items-center justify-center p-4">
+        
+        <!-- Home View -->
+        <div id="home-view" class="page-view hidden bg-white p-8 rounded-xl shadow-2xl transition duration-500">
+            <h1 class="text-5xl font-extrabold text-[#071739] mb-4">job-connect</h1>
+            <p class="text-xl text-gray-700 mb-8">Please log in or register to access your personalized Employee Dashboard or Employer Console.</p>
+
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- Employee Card -->
+                <div class="bg-[#CDD5DB] p-6 rounded-lg border-l-4 border-[#4B6382] shadow-md">
+                    <h2 class="text-2xl font-bold text-[#071739] mb-2">Employee Access</h2>
+                    <p class="text-gray-800">Manage time-off, view pay stubs, and track goals.</p>
+                    <button onclick="showPage('auth'); toggleAuthMode(true)" class="mt-4 bg-[#4B6382] text-white py-2 px-4 rounded-lg hover:bg-[#071739] transition shadow-md">Login as Employee</button>
+                </div>
+                <!-- Employer Card -->
+                <div class="bg-[#E3C39D] p-6 rounded-lg border-l-4 border-[#A68868] shadow-md">
+                    <h2 class="text-2xl font-bold text-[#071739] mb-2">Employer Access</h2>
+                    <p class="text-gray-800">Streamline hiring, manage teams, and view analytics.</p>
+                    <button onclick="showPage('auth'); toggleAuthMode(true)" class="mt-4 bg-[#A68868] text-white py-2 px-4 rounded-lg hover:bg-[#E3C39D] transition shadow-md">Login as Employer</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Auth View (Login/Register) -->
+        <div id="auth-view" class="page-view hidden max-w-lg mx-auto bg-white p-8 rounded-xl shadow-2xl transition duration-500">
+            <h1 id="auth-title" class="text-3xl font-bold text-[#071739] mb-6 text-center">Login</h1>
+            
+            <!-- Message Box -->
+            <div id="auth-message" class="hidden p-3 mb-4 rounded-lg text-sm font-medium" role="alert"></div>
+
+            <!-- Toggle Buttons -->
+            <div class="flex justify-center mb-6">
+                <button id="toggle-login" class="px-4 py-2 text-sm font-medium border-b-2 border-[#4B6382] text-[#4B6382]" onclick="toggleAuthMode(true)">Login</button>
+                <button id="toggle-register" class="px-4 py-2 text-sm font-medium text-gray-500 hover:text-[#4B6382]" onclick="toggleAuthMode(false)">Register</button>
+            </div>
+
+            <form id="auth-form" onsubmit="handleAuth(event)">
+                <!-- Email Input -->
+                <div class="mb-4">
+                    <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                    <input type="email" id="email" name="email" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-[#4B6382] focus:border-[#4B6382]" value="employee@test.com">
+                </div>
+                
+                <!-- Password Input -->
+                <div class="mb-6">
+                    <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                    <input type="password" id="password" name="password" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-[#4B6382] focus:border-[#4B6382]" value="password">
+                </div>
+
+                <!-- Role Selection (Registration Only) -->
+                <div id="role-select-group" class="mb-6 hidden">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Select Your Role</label>
+                    <div class="flex space-x-4">
+                        <label class="flex items-center p-3 bg-gray-50 rounded-lg border hover:border-[#4B6382] cursor-pointer w-full">
+                            <input type="radio" name="role" value="employee" class="h-4 w-4 text-[#4B6382] border-gray-300 focus:ring-[#4B6382]" checked>
+                            <span class="ml-3 text-sm font-medium text-gray-700">Employee</span>
+                        </label>
+                        <label class="flex items-center p-3 bg-gray-50 rounded-lg border hover:border-[#4B6382] cursor-pointer w-full">
+                            <input type="radio" name="role" value="employer" class="h-4 w-4 text-[#4B6382] border-gray-300 focus:ring-[#4B6382]">
+                            <span class="ml-3 text-sm font-medium text-gray-700">Employer</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" id="auth-submit-btn" class="w-full button-primary bg-[#4B6382] text-white font-semibold py-3 rounded-lg hover:bg-[#071739] focus:outline-none focus:ring-2 focus:ring-[#4B6382] focus:ring-offset-2 flex justify-center items-center">
+                    <span id="auth-btn-text">Log In</span>
+                    <!-- Loading Spinner -->
+                    <div id="auth-spinner" class="loading-spinner w-5 h-5 border-2 border-white rounded-full ml-3 hidden"></div>
+                </button>
+            </form>
+        </div>
+
+        <!-- Employee Dashboard View -->
+        <div id="employee-view" class="page-view hidden bg-white p-8 rounded-xl shadow-2xl transition duration-500 border-t-4 border-[#4B6382]">
+            <h1 class="text-3xl font-bold text-[#071739] mb-6">Employee Dashboard</h1>
+            <p class="text-lg text-[#4B6382] mb-4">You are securely logged in as an Employee. User ID: <span id="employee-user-id" class="font-mono text-sm bg-[#CDD5DB] p-1 rounded"></span></p>
+
+            <div class="grid md:grid-cols-3 gap-6">
+                <!-- KPI 1 -->
+                <div class="bg-[#CDD5DB] p-5 rounded-lg border border-[#A4B5C4] shadow-md">
+                    <p class="text-sm font-medium text-gray-700">Available PTO</p>
+                    <p class="text-4xl font-extrabold text-[#071739] mt-1">15.5</p>
+                    <p class="text-xs text-gray-700">Days Remaining</p>
+                </div>
+                <!-- KPI 2 -->
+                <div class="bg-[#CDD5DB] p-5 rounded-lg border border-[#A4B5C4] shadow-md">
+                    <p class="text-sm font-medium text-gray-700">Next Pay Date</p>
+                    <p class="text-2xl font-extrabold text-[#071739] mt-2">Nov 15, 2025</p>
+                    <p class="text-xs text-gray-700">Bi-weekly Cycle</p>
+                </div>
+                <!-- KPI 3 -->
+                <div class="bg-[#CDD5DB] p-5 rounded-lg border border-[#A4B5C4] shadow-md">
+                    <p class="text-sm font-medium text-gray-700">Tasks Completed</p>
+                    <p class="text-4xl font-extrabold text-[#071739] mt-1">87%</p>
+                    <p class="text-xs text-gray-700">This Quarter</p>
+                </div>
+            </div>
+            <!-- More Employee content here -->
+        </div>
+
+        <!-- Employer Console View -->
+        <div id="employer-view" class="page-view hidden bg-white p-8 rounded-xl shadow-2xl transition duration-500 border-t-4 border-[#A68868]">
+            <h1 class="text-4xl font-bold text-[#071739] mb-6">Employer Operations Console</h1>
+            <p class="text-lg text-[#A68868] mb-4">You are securely logged in as an Employer. User ID: <span id="employer-user-id" class="font-mono text-sm bg-[#E3C39D] p-1 rounded"></span></p>
+            
+            <div class="grid md:grid-cols-2 gap-6">
+                <!-- Metric 1 -->
+                <div class="bg-[#E3C39D] p-6 rounded-lg border-l-4 border-[#A68868] shadow-md">
+                    <h2 class="text-2xl font-bold text-[#071739] mb-3">Team Performance Summary</h2>
+                    <p class="text-4xl font-extrabold text-gray-900">95%</p>
+                    <p class="text-sm text-gray-700 mb-4">Average Project Completion Rate (Q4)</p>
+                </div>
+                <!-- Metric 2 -->
+                <div class="bg-[#E3C39D] p-6 rounded-lg border-l-4 border-[#A68868] shadow-md">
+                    <h2 class="text-2xl font-bold text-[#071739] mb-3">Open Requests</h2>
+                    <ul class="space-y-2">
+                        <!-- Example data -->
+                        <li class="flex justify-between text-gray-800">
+                            <span>PTO Requests:</span>
+                            <span class="font-bold text-[#A68868]">3 Pending</span>
+                        </li>
+                        <!-- More data... -->
+                    </ul>
+                    <button class="mt-4 bg-[#A68868] text-white py-2 px-4 rounded-lg hover:bg-[#E3C39D] transition shadow-md w-full">Review All Requests</button>
+                </div>
+            </div>
+            <!-- More Employer content here -->
+        </div>
+
+        <!-- Access Denied View -->
+        <div id="denied-view" class="page-view hidden flex justify-center items-center bg-white p-12 rounded-xl shadow-2xl transition duration-500">
+             <div class="text-center">
+                 <p class="text-6xl text-[#A68868] mb-4">🔒</p>
+                 <h1 class="text-3xl font-bold text-[#071739] mb-3">Access Denied</h1>
+                 <p class="text-lg text-gray-700 mb-6">You do not have the required role to view this page. Please log in with the correct credentials.</p>
+                 <button onclick="showPage('auth')" class="bg-[#4B6382] text-white py-2 px-6 rounded-lg hover:bg-[#071739] transition shadow-md">Go to Login</button>
+             </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-[#071739] text-white p-4 mt-auto">
+        <div class="max-w-7xl mx-auto text-center text-sm">
+            © 2025 WorkFlow Hub. Local Authentication Enabled.
+        </div>
+    </footer>
+
+    <!-- JavaScript for Local Authentication and Routing -->
+    <script>
+        let currentUser = null;
+        let currentUserRole = null;
+        let isLoginMode = true; // State for the auth form
+
+        // --- Utility Functions ---
+
+        /**
+         * Displays a temporary notification message on the auth form.
+         */
+        function showMessage(type, message) {
+            const messageBox = document.getElementById('auth-message');
+            messageBox.textContent = message;
+            messageBox.className = 'p-3 mb-4 rounded-lg text-sm font-medium'; // Reset classes
+            
+            if (type === 'error') {
+                messageBox.classList.add('bg-red-100', 'text-red-700');
+            } else if (type === 'success') {
+                messageBox.classList.add('bg-green-100', 'text-green-700');
+            } else if (type === 'info') {
+                 messageBox.classList.add('bg-blue-100', 'text-blue-700');
+            }
+            messageBox.classList.remove('hidden');
+        }
+
+        function hideMessage() {
+            document.getElementById('auth-message').classList.add('hidden');
+        }
+
+        /**
+         * Shows or hides the loading spinner on the authentication button.
+         */
+        function setAuthLoading(isLoading, buttonText) {
+            const btn = document.getElementById('auth-submit-btn');
+            const textSpan = document.getElementById('auth-btn-text');
+            const spinner = document.getElementById('auth-spinner');
+            
+            if (isLoading) {
+                textSpan.textContent = '';
+                spinner.classList.remove('hidden');
+                btn.disabled = true;
+            } else {
+                textSpan.textContent = buttonText;
+                spinner.classList.add('hidden');
+                btn.disabled = false;
+            }
+        }
+
+        // --- Core Application Functions ---
+
+        /**
+         * Switches the active page view and updates navigation/state.
+         */
+        window.showPage = (pageId) => {
+            const pageViews = document.querySelectorAll('.page-view');
+
+            // 1. Hide all views
+            pageViews.forEach(view => view.classList.add('hidden'));
+
+            // 2. Show the selected view
+            const selectedView = document.getElementById(`${pageId}-view`);
+            if (selectedView) {
+                selectedView.classList.remove('hidden');
+            }
+            
+            // 3. Clear auth form if navigating away
+            if (pageId !== 'auth') {
+                 document.getElementById('email').value = '';
+                 document.getElementById('password').value = '';
+                 hideMessage();
+            }
+        }
+
+        /**
+         * Updates the navigation links based on local authentication status.
+         */
+        function updateNavigation() {
+            const authButtons = document.getElementById('auth-buttons');
+            const userDashboardButtons = document.getElementById('user-dashboard-buttons');
+            const userRoleDisplay = document.getElementById('user-role-display');
+
+            if (currentUser && currentUserRole) {
+                // Logged-in User
+                authButtons.classList.add('hidden');
+                userDashboardButtons.classList.remove('hidden');
+                
+                userRoleDisplay.textContent = `Role: ${currentUserRole.charAt(0).toUpperCase() + currentUserRole.slice(1)}`;
+
+                // Ensure the dashboard button has the active styling
+                const dashboardButton = document.getElementById('user-dashboard-buttons').querySelector('button');
+                if (dashboardButton) {
+                     dashboardButton.classList.remove('border-transparent', 'hover:border-indigo-300', 'text-gray-700');
+                     dashboardButton.classList.add('border-[#4B6382]', 'text-[#4B6382]');
+                }
+
+            } else {
+                // Logged-out User
+                currentUserRole = null;
+                userRoleDisplay.textContent = '';
+                authButtons.classList.remove('hidden');
+                userDashboardButtons.classList.add('hidden');
+            }
+        }
+
+
+        /**
+         * Displays the correct dashboard based on the user's fetched role.
+         */
+        window.showUserDashboard = () => {
+            if (!currentUser || !currentUserRole) {
+                showPage('auth');
+                return;
+            }
+
+            if (currentUserRole === 'employee') {
+                document.getElementById('employee-user-id').textContent = currentUser.uid;
+                showPage('employee');
+            } else if (currentUserRole === 'employer') {
+                document.getElementById('employer-user-id').textContent = currentUser.uid;
+                showPage('employer');
+            } else {
+                showPage('denied'); // Fallback for unknown role
+            }
+        }
+
+        /**
+         * Toggles between the Login and Register forms.
+         */
+        window.toggleAuthMode = (toLogin) => {
+            isLoginMode = toLogin;
+            hideMessage();
+            document.getElementById('auth-title').textContent = toLogin ? 'Login' : 'Register New User';
+            document.getElementById('auth-btn-text').textContent = toLogin ? 'Log In' : 'Register Account';
+            
+            // Toggle border/color classes for the buttons
+            document.getElementById('toggle-login').classList.toggle('border-[#4B6382]', toLogin);
+            document.getElementById('toggle-login').classList.toggle('text-[#4B6382]', toLogin);
+            document.getElementById('toggle-login').classList.toggle('text-gray-500', !toLogin);
+            document.getElementById('toggle-login').classList.toggle('border-transparent', !toLogin);
+
+            document.getElementById('toggle-register').classList.toggle('border-[#4B6382]', !toLogin);
+            document.getElementById('toggle-register').classList.toggle('text-[#4B6382]', !toLogin);
+            document.getElementById('toggle-register').classList.toggle('text-gray-500', toLogin);
+            document.getElementById('toggle-register').classList.toggle('border-transparent', toLogin);
+            
+            // Show role selection only for registration
+            document.getElementById('role-select-group').classList.toggle('hidden', toLogin);
+        }
+
+        // --- Local Authentication Functions ---
+
+        /**
+         * Simulated user data storage (in memory)
+         */
+        const localUserDB = {
+            'employee@test.com': { uid: 'mock-uid-1', role: 'employee', password: 'password' },
+            'employer@test.com': { uid: 'mock-uid-2', role: 'employer', password: 'password' },
+        };
+        
+        // Mock UUID function for new user registration
+        function mockUUID() {
+             return 'mock-uid-' + Math.random().toString(36).substring(2, 9);
+        }
+
+
+        /**
+         * Handles the form submission for both Login and Registration.
+         */
+        window.handleAuth = async (event) => {
+            event.preventDefault();
+            hideMessage();
+            
+            const form = event.target;
+            const email = form.email.value.trim();
+            const password = form.password.value;
+            const roleInput = form.querySelector('input[name="role"]:checked');
+            const role = roleInput ? roleInput.value : null;
+
+            const buttonText = isLoginMode ? 'Log In' : 'Register Account';
+            
+            // Basic validation
+            if (!email || !password) {
+                showMessage('error', 'Please fill in all fields.');
+                return;
+            }
+
+            setAuthLoading(true, buttonText);
+
+            // Simulate Network Delay
+            await new Promise(resolve => setTimeout(resolve, 500));
+
+            try {
+                if (isLoginMode) {
+                    // LOCAL LOGIN PROCESS
+                    const userData = localUserDB[email];
+                    if (userData && userData.password === password) {
+                         currentUser = { uid: userData.uid, email: email };
+                         currentUserRole = userData.role;
+                         showMessage('success', 'Login successful! Redirecting...');
+                    } else {
+                         throw new Error("Invalid credentials. Try 'employee@test.com' or 'employer@test.com' with password 'password'.");
+                    }
+                } else {
+                    // LOCAL REGISTRATION PROCESS
+                    if (localUserDB[email]) {
+                         throw new Error("This email is already registered. Please log in.");
+                    }
+                    if (!role) {
+                         throw new Error('Please select a role (Employee or Employer).');
+                    }
+                    
+                    // Register user locally (in memory)
+                    const newUid = mockUUID();
+                    localUserDB[email] = { uid: newUid, role: role, password: password };
+                    
+                    currentUser = { uid: newUid, email: email };
+                    currentUserRole = role;
+
+                    showMessage('success', 'Registration successful! Setting up your account...');
+                }
+                
+                // Final state update and navigation after successful auth
+                updateNavigation();
+                showUserDashboard();
+                
+            } catch (error) {
+                console.error("Authentication Error:", error);
+                showMessage('error', `Authentication Failed: ${error.message}`);
+            } finally {
+                setAuthLoading(false, buttonText);
+            }
+        }
+        
+        /**
+         * Handles user logout.
+         */
+        window.logout = async () => {
+             // Simulate Network Delay
+            await new Promise(resolve => setTimeout(resolve, 300));
+
+            currentUser = null;
+            currentUserRole = null;
+            console.log("User signed out.");
+
+            updateNavigation();
+            showPage('home');
+        };
+
+        /**
+         * Initializes the application state on load.
+         */
+        function initializeApp() {
+            // Hide the initial loading overlay
+            document.getElementById('loading-view').classList.add('hidden');
+            // Set initial page view
+            showPage('home');
+            // Update navigation based on current (logged-out) state
+            updateNavigation();
+        }
+
+        // Start the application setup
+        window.onload = initializeApp;
+
+    </script>
+</body>
+</html>
