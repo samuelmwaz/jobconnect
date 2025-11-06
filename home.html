@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JobConnect | Your Next Career Move Starts Here</title>
+    <title>JobConnect and events | Your Next Career Move Starts Here</title>
     
 <script src="https://cdn.tailwindcss.com"></script>
     
@@ -22,8 +22,6 @@
             font-family: 'Inter', sans-serif; 
             background-color: var(--color-deep-blue);
             color: white; 
-            /* Fix Screen Layout: Prevent all horizontal scrolling */
-            overflow-x: hidden; 
         }
 
         /* Primary Button Colors (Dark Blue to Slate Blue Gradient) */
@@ -97,7 +95,6 @@
             background-image: url('https://images.unsplash.com/photo-1519085370754-ab5f9ec6c200?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'); /* Abstract texture or dark pattern */
             background-size: cover;
             background-position: center;
-            position: relative; /* Needed for the ::before overlay */
         }
         .about-bg-img::before {
             content: '';
@@ -123,13 +120,14 @@
         <div class="max-w-7xl mx-auto flex justify-between items-center p-4 sm:p-6">
             <div class="text-2xl font-bold flex items-center text-[--color-light-tan]">
                 <i data-lucide="rocket" class="w-6 h-6 mr-2 text-[--color-light-tan]"></i>
-                JobConnect
+                JobConnect and events
             </div>
-            <nav class="flex space-x-2 sm:space-x-6 text-xs sm:text-base">
-                <a href="#about" class="text-white hover:text-[--color-light-tan] transition duration-150 py-2 hidden sm:inline-block">About</a>
-                <a href="./employee.html" class="text-white hover:text-[--color-light-tan] transition duration-150 py-2">Employee</a>
-                <a href="./employer.html" class="text-white hover:text-[--color-light-tan] transition duration-150 py-2">Employer</a>
-                <a href="./regisrtation.html" class="btn-primary py-2 px-3 sm:px-4 rounded-lg">Register</a>
+            <nav class="flex space-x-4 sm:space-x-6 text-sm sm:text-base">
+                <a href="#about" class="text-white hover:text-[--color-light-tan] transition duration-150 py-2">About</a>
+                <a href="./employee.html" class="text-white hover:text-[--color-light-tan] transition duration-150 py-2">Employee Portal</a>
+                <a href="./employer_dashboard.html" class="text-white hover:text-[--color-light-tan] transition duration-150 py-2">Employer Console</a>
+                <a href="./events.html" class="text-white hover:text-[--color-light-tan] transition duration-150 py-2 font-bold border-b-2 border-transparent hover:border-[--color-light-tan]">Event Vendors</a>
+                <a href="./regisrtation.html" class="btn-primary py-2 px-4 rounded-lg">Register</a>
             </nav>
         </div>
     </header>
@@ -141,9 +139,9 @@
 <section id="hero-section">
             <div class="hero-overlay"></div>
             
-<div class="hero-background-image active" style="background-image: url('https://images.unsplash.com/photo-1517048676732-d65bc937f952?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')"></div>
-            <div class="hero-background-image" style="background-image: url('https://images.unsplash.com/photo-1504384308090-c894fd241d81?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')"></div>
-            <div class="hero-background-image" style="background-image: url('https://images.unsplash.com/photo-1542744095-291d1f67b221?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')"></div>
+<div class="hero-background-image active" style="background-image: url('images/8dd01a49f3cb587a8a476be04629ba0d.jpg')"></div>
+            <div class="hero-background-image" style="background-image: url(' images/a9b4097a1576e65cb3c487abbc2d2acb.jpg')"></div>
+            <div class="hero-background-image" style="background-image: url('images/cf4f4d1fc6d21ea090f51a5bc2e14c81.jpg')"></div>
             <div class="hero-background-image" style="background-image: url('https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')"></div>
             
             <div class="hero-content max-w-4xl mx-auto px-4">
@@ -158,7 +156,7 @@
                         <i data-lucide="briefcase" class="w-5 h-5 mr-2"></i>
                         Find an Internal Job
                     </a>
-                    <a href="./employer.html" class="py-3 px-8 rounded-xl text-lg font-semibold border-2 border-[--color-slate-blue] text-[--color-light-blue] hover:bg-[--color-slate-blue] hover:text-white transition duration-200 flex items-center justify-center">
+                    <a href="./employer_dashboard.html" class="py-3 px-8 rounded-xl text-lg font-semibold border-2 border-[--color-slate-blue] text-[--color-light-blue] hover:bg-[--color-slate-blue] hover:text-white transition duration-200 flex items-center justify-center">
                         <i data-lucide="users" class="w-5 h-5 mr-2"></i>
                         Hire Internal Talent
                     </a>
@@ -168,32 +166,28 @@
 
         
 <section id="about" class="py-16 sm:py-24 about-bg-img relative overflow-hidden text-white">
-            <!-- Background image and overlay are handled by .about-bg-img::before in CSS -->
             <div class="about-content max-w-6xl mx-auto px-4 text-center">
                 <h2 class="text-3xl sm:text-4xl font-bold mb-4 text-[--color-light-tan]">Who We Are & What We're About</h2>
                 <p class="text-xl text-white/90 mb-12 max-w-3xl mx-auto">
-                    **JobConnect** is the dedicated internal marketplace for career growth and talent deployment within our organization. We bridge the gap between open roles and skilled employees ready for their next challenge.
+                    **JobCoonnect and events ** is the dedicated internal marketplace for career growth and talent deployment within our organization. We bridge the gap between open roles and skilled employees ready for their next challenge.
                 </p>
                 
                 <div class="grid md:grid-cols-3 gap-8">
                     
-                    <!-- Internal Mobility Card with Image -->
                     <div class="p-6 rounded-xl shadow-2xl border-t-4 border-[--color-light-tan] card text-center bg-white/10 hover:bg-white/20">
-                        <img src="https://placehold.co/96x96/4B6382/E3C39D?text=Growth" alt="Icon representing growth and advancement" class="w-24 h-24 rounded-full mx-auto mb-4 object-cover border-4 border-[--color-light-tan]">
+                        <img src="images/fe8a64e2a4a33af47e7d1f47196a6243.jpg" alt="Icon representing growth and advancement" class="w-24 h-24 rounded-full mx-auto mb-4 object-cover border-4 border-[--color-light-tan]">
                         <h3 class="text-xl font-bold mb-2 text-[--color-light-tan]">Internal Mobility</h3>
                         <p class="text-white/80">We champion the belief that our best assets are our current employees. By facilitating seamless internal transfers, we boost retention and foster career development.</p>
                     </div>
 
-                    <!-- Speed & Efficiency Card with Image -->
                     <div class="p-6 rounded-xl shadow-2xl border-t-4 border-[--color-light-tan] card text-center bg-white/10 hover:bg-white/20">
-                        <img src="https://placehold.co/96x96/4B6382/E3C39D?text=Fast" alt="Icon representing speed and efficiency" class="w-24 h-24 rounded-full mx-auto mb-4 object-cover border-4 border-[--color-light-tan]">
+                        <img src="images/8dd01a49f3cb587a8a476be04629ba0d.jpg" alt="Icon representing speed and efficiency" class="w-24 h-24 rounded-full mx-auto mb-4 object-cover border-4 border-[--color-light-tan]">
                         <h3 class="text-xl font-bold mb-2 text-[--color-light-tan]">Speed & Efficiency</h3>
                         <p class="text-white/80">Recruit faster and reduce time-to-hire by focusing on pre-vetted, culturally aligned talent already within our ecosystem.</p>
                     </div>
 
-                    <!-- Employee Satisfaction Card with Image -->
                     <div class="p-6 rounded-xl shadow-2xl border-t-4 border-[--color-light-tan] card text-center bg-white/10 hover:bg-white/20">
-                        <img src="https://placehold.co/96x96/4B6382/E3C39D?text=Value" alt="Icon representing employee value and satisfaction" class="w-24 h-24 rounded-full mx-auto mb-4 object-cover border-4 border-[--color-light-tan]">
+                        <img src="images/25f7829c62f796bb371bbc5c1fa52cb1.jpg" alt="Icon representing employee value and satisfaction" class="w-24 h-24 rounded-full mx-auto mb-4 object-cover border-4 border-[--color-light-tan]">
                         <h3 class="text-xl font-bold mb-2 text-[--color-light-tan]">Employee Satisfaction</h3>
                         <p class="text-white/80">Providing transparent paths for advancement ensures employees feel valued and invested in the company's future.</p>
                     </div>
@@ -206,16 +200,13 @@
             <div class="max-w-6xl mx-auto px-4">
                 <h2 class="text-3xl sm:text-4xl font-bold text-center mb-12 text-[--color-light-tan]">Platform Highlights</h2>
                 
-                <!-- For Employees Section: Image | Text/List + CTA Card -->
-<div class="grid md:grid-cols-2 gap-10 items-center mb-20">
+                <div class="grid md:grid-cols-2 gap-10 items-center mb-20">
                     
-                    <!-- Image Block (Left Column) -->
-                    <div class="rounded-xl overflow-hidden shadow-2xl order-2 md:order-1">
-                        <img src="https://placehold.co/600x400/071739/E3C39D?text=Employee+Portal+View" alt="Snapshot of an employee dashboard showing job opportunities" class="w-full h-auto object-cover transition-transform duration-500 hover:scale-[1.03]">
+                    <div class="rounded-xl overflow-hidden shadow-2xl">
+                        <img src="images/Screenshot 2025-11-04 150902.png" alt="Snapshot of an employee dashboard showing job opportunities" class="w-full h-auto object-cover transition-transform duration-500 hover:scale-[1.03]">
                     </div>
 
-                    <!-- Text/List + CTA (Right Column) - Combined Card -->
-                    <div class="card p-8 rounded-xl border-l-4 border-[--color-light-tan] shadow-xl order-1 md:order-2">
+                    <div class="card p-8 rounded-xl border-l-4 border-[--color-light-tan] shadow-xl">
                         <h3 class="text-3xl font-extrabold mb-4 text-[--color-light-tan]">For Employees: Seamless Career Advancement</h3>
                         <ul class="space-y-4 text-lg mb-6">
                             <li class="flex items-start">
@@ -240,10 +231,8 @@
                     </div>
                 </div>
 
-                <!-- For Employers Section: Text/List + CTA Card | Image -->
-<div class="grid md:grid-cols-2 gap-10 items-center mt-20">
+                <div class="grid md:grid-cols-2 gap-10 items-center">
                     
-                    <!-- Text/List + CTA (Left Column) - Combined Card -->
                     <div class="card p-8 rounded-xl border-r-4 border-[--color-light-tan] shadow-xl order-2 md:order-1">
                         <h3 class="text-3xl font-extrabold mb-4 text-[--color-light-tan]">For Employers: Optimized Talent Acquisition</h3>
                         <ul class="space-y-4 text-lg mb-6">
@@ -262,22 +251,50 @@
                         </ul>
                         <div class="pt-4 border-t border-white/20">
                             <h4 class="text-xl font-bold mb-3">Need to hire?</h4>
-                            <a href="./employer.html" class="btn-primary py-2 px-5 rounded-lg inline-flex items-center">
+                            <a href="./employer_dashboard.html" class="btn-primary py-2 px-5 rounded-lg inline-flex items-center">
                                 <i data-lucide="users" class="w-4 h-4 mr-2"></i> Go to Employer Console
                             </a>
                         </div>
                     </div>
 
-                    <!-- Image Block (Right Column) -->
                     <div class="rounded-xl overflow-hidden shadow-2xl order-1 md:order-2">
-                        <img src="https://placehold.co/600x400/4B6382/E3C39D?text=Employer+Console+View" alt="Snapshot of an employer console with hiring metrics" class="w-full h-auto object-cover transition-transform duration-500 hover:scale-[1.03]">
+                        <img src="images/Screenshot 2025-11-04 151025.png" alt="Snapshot of an employer console with hiring metrics" class="w-full h-auto object-cover transition-transform duration-500 hover:scale-[1.03]">
                     </div>
                 </div>
             </div>
         </section>
 
-        
-<section class="py-16 bg-[--color-slate-blue] text-center text-white">
+        <section class="py-16 sm:py-24 bg-[--color-slate-blue] text-white">
+            <div class="max-w-6xl mx-auto px-4 text-center">
+                <h2 class="text-3xl sm:text-4xl font-bold mb-4 text-[--color-light-tan]">Plan Your Perfect Event</h2>
+                <p class="text-xl text-white/90 mb-8 max-w-3xl mx-auto">
+                    Beyond careers, find the essential services for every occasion—from corporate conferences to personal celebrations.
+                </p>
+                <div class="grid md:grid-cols-4 gap-6 mb-12">
+                    <div class="p-4 rounded-lg bg-white/10 flex flex-col items-center">
+                        <i data-lucide="shirt" class="w-8 h-8 mb-2 text-[--color-light-tan]"></i>
+                        <span class="text-sm font-semibold">Clothing & Apparel</span>
+                    </div>
+                    <div class="p-4 rounded-lg bg-white/10 flex flex-col items-center">
+                        <i data-lucide="calendar-check" class="w-8 h-8 mb-2 text-[--color-light-tan]"></i>
+                        <span class="text-sm font-semibold">Event Planners</span>
+                    </div>
+                    <div class="p-4 rounded-lg bg-white/10 flex flex-col items-center">
+                        <i data-lucide="cup-soda" class="w-8 h-8 mb-2 text-[--color-light-tan]"></i>
+                        <span class="text-sm font-semibold">Hiring & Catering</span>
+                    </div>
+                    <div class="p-4 rounded-lg bg-white/10 flex flex-col items-center">
+                        <i data-lucide="map-pin" class="w-8 h-8 mb-2 text-[--color-light-tan]"></i>
+                        <span class="text-sm font-semibold">Event Venues</span>
+                    </div>
+                </div>
+                <a href="./events.html" class="bg-[--color-light-tan] text-[--color-deep-blue] font-bold py-3 px-10 rounded-xl text-xl hover:bg-white transition duration-200 shadow-lg inline-flex items-center">
+                    <i data-lucide="concierge-bell" class="w-6 h-6 mr-2"></i>
+                    Explore Event Vendors
+                </a>
+            </div>
+        </section>
+        <section class="py-16 bg-[--color-slate-blue] text-center text-white">
             <h2 class="text-3xl sm:text-4xl font-extrabold mb-4">Ready to Connect?</h2>
             <p class="text-xl mb-8">Join the internal talent network today and take the first step towards your next professional milestone.</p>
             <a href="./regisrtation.html" class="bg-[--color-light-tan] text-[--color-deep-blue] font-bold py-3 px-10 rounded-xl text-xl hover:bg-white transition duration-200 shadow-lg inline-flex items-center">
