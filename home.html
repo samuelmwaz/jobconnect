@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -24,6 +22,8 @@
             font-family: 'Inter', sans-serif; 
             background-color: var(--color-deep-blue);
             color: white; 
+            /* Added for consistent mobile/desktop scroll behavior */
+            overflow-x: hidden; 
         }
 
         /* Primary Button Colors (Dark Blue to Slate Blue Gradient) */
@@ -92,13 +92,13 @@
             padding: 0 1rem;
         }
 
-        /* New styles for the About section background */
-        .about-bg-img {
+        /* Styles for the About/Vendor section background */
+        .about-vendor-bg-img {
             background-image: url('https://images.unsplash.com/photo-1519085370754-ab5f9ec6c200?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'); /* Abstract texture or dark pattern */
             background-size: cover;
             background-position: center;
         }
-        .about-bg-img::before {
+        .about-vendor-bg-img::before {
             content: '';
             position: absolute;
             top: 0;
@@ -108,30 +108,45 @@
             background: rgba(7, 23, 57, 0.9); /* Deep Blue overlay for contrast */
             z-index: 1;
         }
-        .about-content {
+        .section-content {
             position: relative;
             z-index: 2;
         }
-
+        
     </style>
 </head>
 <body class="min-h-screen">
 
     
-<header class="sticky top-0 z-10 bg-[--color-deep-blue] bg-opacity-95 shadow-lg">
+<header class="sticky top-0 z-50 bg-[--color-deep-blue] bg-opacity-95 shadow-lg">
         <div class="max-w-7xl mx-auto flex justify-between items-center p-4 sm:p-6">
             <div class="text-2xl font-bold flex items-center text-[--color-light-tan]">
                 <i data-lucide="rocket" class="w-6 h-6 mr-2 text-[--color-light-tan]"></i>
                 JobConnect and events
             </div>
-            <nav class="flex space-x-4 sm:space-x-6 text-sm sm:text-base">
+
+            <nav id="desktop-nav" class="hidden md:flex space-x-4 lg:space-x-6 text-sm lg:text-base items-center">
                 <a href="#about" class="text-white hover:text-[--color-light-tan] transition duration-150 py-2">About</a>
                 <a href="./employee.html" class="text-white hover:text-[--color-light-tan] transition duration-150 py-2">Employee Portal</a>
                 <a href="./employer_dashboard.html" class="text-white hover:text-[--color-light-tan] transition duration-150 py-2">Employer Console</a>
                 <a href="#vendors" class="text-white hover:text-[--color-light-tan] transition duration-150 py-2">Vendors</a>
                 <a href="./regisrtation.html" class="btn-primary py-2 px-4 rounded-lg">Register</a>
             </nav>
+
+            <button id="mobile-menu-button" class="md:hidden text-white p-2 focus:outline-none" aria-label="Toggle navigation menu">
+                <i data-lucide="menu" class="w-6 h-6"></i>
+            </button>
         </div>
+
+        <nav id="mobile-menu" class="hidden md:hidden bg-[--color-slate-blue] text-center pb-4 space-y-3">
+            <a href="#about" class="block text-white hover:text-[--color-light-tan] transition duration-150 px-6 py-2" onclick="document.getElementById('mobile-menu').classList.toggle('hidden')">About</a>
+            <a href="./employee.html" class="block text-white hover:text-[--color-light-tan] transition duration-150 px-6 py-2" onclick="document.getElementById('mobile-menu').classList.toggle('hidden')">Employee Portal</a>
+            <a href="./employer_dashboard.html" class="block text-white hover:text-[--color-light-tan] transition duration-150 px-6 py-2" onclick="document.getElementById('mobile-menu').classList.toggle('hidden')">Employer Console</a>
+            <a href="#vendors" class="block text-white hover:text-[--color-light-tan] transition duration-150 px-6 py-2" onclick="document.getElementById('mobile-menu').classList.toggle('hidden')">Vendors</a>
+            <div class="px-6 pt-2">
+                <a href="./regisrtation.html" class="btn-primary py-2 px-6 rounded-lg w-full block">Register</a>
+            </div>
+        </nav>
     </header>
 
     
@@ -167,14 +182,14 @@
         </section>
 
         
-<section id="about" class="py-16 sm:py-24 about-bg-img relative overflow-hidden text-white">
-            <div class="about-content max-w-6xl mx-auto px-4 text-center">
+<section id="about" class="py-16 sm:py-24 about-vendor-bg-img relative overflow-hidden text-white">
+            <div class="section-content max-w-6xl mx-auto px-4 text-center">
                 <h2 class="text-3xl sm:text-4xl font-bold mb-4 text-[--color-light-tan]">Who We Are & What We're About</h2>
                 <p class="text-xl text-white/90 mb-12 max-w-3xl mx-auto">
                     **JobCoonnect and events ** is the dedicated internal marketplace for career growth and talent deployment within our organization. We bridge the gap between open roles and skilled employees ready for their next challenge.
                 </p>
                 
-                <div class="grid md:grid-cols-3 gap-8">
+                <div class="grid sm:grid-cols-2 md:grid-cols-3 gap-8">
                     
                     <div class="p-6 rounded-xl shadow-2xl border-t-4 border-[--color-light-tan] card text-center bg-white/10 hover:bg-white/20">
                         <img src="images/fe8a64e2a4a33af47e7d1f47196a6243.jpg" alt="Icon representing growth and advancement" class="w-24 h-24 rounded-full mx-auto mb-4 object-cover border-4 border-[--color-light-tan]">
@@ -266,8 +281,8 @@
             </div>
         </section>
 
-        <section id="vendors" class="py-16 sm:py-24 about-bg-img relative overflow-hidden text-white">
-            <div class="about-content max-w-6xl mx-auto px-4">
+        <section id="vendors" class="py-16 sm:py-24 about-vendor-bg-img relative overflow-hidden text-white">
+            <div class="section-content max-w-6xl mx-auto px-4">
                 <h2 class="text-3xl sm:text-4xl font-bold text-center mb-12 text-[--color-light-tan] flex items-center justify-center">
                     <i data-lucide="store" class="w-8 h-8 mr-3"></i>
                     Our Vendors & Marketplace
@@ -275,27 +290,27 @@
                 
                 <div class="bg-white/10 p-8 rounded-xl shadow-2xl mb-12 border-l-4 border-[--color-light-tan]">
                     <h3 class="text-2xl font-extrabold mb-4 text-[--color-light-tan]">Vendor Policy Highlights</h3>
-                    [cite_start]<p class="text-lg mb-6">The Job Connect and Events extends its services to support and regulate **all types of vendors**, including product vendors, service providers, and event-related vendors[cite: 45].</p>
+                    [cite_start]<p class="text-lg mb-6">The Job Connect and Events extends its services to support and regulate **all types of vendors**, including product vendors, service providers, and event-related vendors[cite: 296].</p>
                     <ul class="space-y-3 text-white/90">
                         <li class="flex items-start">
                             <i data-lucide="check-circle" class="w-5 h-5 flex-shrink-0 mt-1 mr-3 text-[--color-light-tan]"></i>
-                            [cite_start]<span>**Registration & Verification:** All vendors must complete a registration process, providing accurate business information and necessary certifications to ensure legitimacy and quality[cite: 48, 49].</span>
+                            [cite_start]<span>**Registration & Verification:** All vendors must complete a registration process, providing accurate business information and necessary certifications to ensure legitimacy and quality[cite: 299, 300].</span>
                         </li>
                         <li class="flex items-start">
                             <i data-lucide="dollar-sign" class="w-5 h-5 flex-shrink-0 mt-1 mr-3 text-[--color-light-tan]"></i>
-                            [cite_start]<span>**Fees & Commission:** Vendors agree to a **percentage-based fee** for each successful transaction or service provided[cite: 55].</span>
+                            [cite_start]<span>**Fees & Commission:** Vendors agree to a **percentage-based fee** for each successful transaction or service provided[cite: 306].</span>
                         </li>
                         <li class="flex items-start">
                             <i data-lucide="receipt" class="w-5 h-5 flex-shrink-0 mt-1 mr-3 text-[--color-light-tan]"></i>
-                            [cite_start]<span>**Official Documentation:** The platform provides official documents for each transaction, serving as proof of agreement and recorded in our secure database[cite: 58, 59].</span>
+                            [cite_start]<span>**Official Documentation:** The platform provides official documents for each transaction, serving as proof of agreement and recorded in our secure database[cite: 309, 310].</span>
                         </li>
                         <li class="flex items-start">
                             <i data-lucide="gavel" class="w-5 h-5 flex-shrink-0 mt-1 mr-3 text-[--color-light-tan]"></i>
-                            [cite_start]<span>**Dispute Resolution:** The Job Connect and Events will **mediate between the vendor and customer** to reach a fair resolution in cases of disputes[cite: 63].</span>
+                            [cite_start]<span>**Dispute Resolution:** The Job Connect and Events will **mediate between the vendor and customer** to reach a fair resolution in cases of disputes[cite: 314].</span>
                         </li>
                         <li class="flex items-start">
                             <i data-lucide="award" class="w-5 h-5 flex-shrink-0 mt-1 mr-3 text-[--color-light-tan]"></i>
-                            [cite_start]<span>**Partnership Benefits:** Registered vendors gain **increased visibility**, access to a wider customer base, and secure documentation[cite: 69].</span>
+                            [cite_start]<span>**Partnership Benefits:** Registered vendors gain **increased visibility**, access to a wider customer base, and secure documentation[cite: 320].</span>
                         </li>
                     </ul>
                 </div>
@@ -304,103 +319,124 @@
                     <i data-lucide="list-filter" class="w-6 h-6 mr-2"></i>
                     Vendor Categories for Quick Search (Lusaka, Zambia)
                 </h3>
-                <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 text-left">
+                <div class="grid xs:grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 text-left">
                     
                     <div class="p-4 rounded-lg bg-white/10 shadow-lg">
                         <h4 class="font-bold text-xl mb-2 text-[--color-light-tan]">1. Food & Beverage Vendors</h4>
                         <ul class="text-sm space-y-1 text-white/80">
-                            [cite_start]<li>Restaurants [cite: 176]</li>
-                            [cite_start]<li>Cafés [cite: 177]</li>
-                            [cite_start]<li>Catering [cite: 178]</li>
-                            [cite_start]<li>Street Food [cite: 179]</li>
-                            [cite_start]<li>Bakeries [cite: 180]</li>
-                            [cite_start]<li>Grocery / Fresh Produce [cite: 181]</li>
+                            [cite_start]<li>Restaurants [cite: 427]</li>
+                            [cite_start]<li>Cafés [cite: 428]</li>
+                            [cite_start]<li>Catering [cite: 429]</li>
+                            [cite_start]<li>Street Food [cite: 430]</li>
+                            [cite_start]<li>Bakeries [cite: 431]</li>
+                            [cite_start]<li>Grocery / Fresh Produce [cite: 432]</li>
                         </ul>
                     </div>
                     
                     <div class="p-4 rounded-lg bg-white/10 shadow-lg">
                         <h4 class="font-bold text-xl mb-2 text-[--color-light-tan]">2. Retail & Shopping</h4>
                         <ul class="text-sm space-y-1 text-white/80">
-                            [cite_start]<li>Clothing & Fashion [cite: 184]</li>
-                            [cite_start]<li>Shoes [cite: 185]</li>
-                            [cite_start]<li>Electronics [cite: 187]</li>
-                            [cite_start]<li>Mobile Phones & Accessories [cite: 188]</li>
-                            [cite_start]<li>Furniture [cite: 189]</li>
-                            [cite_start]<li>Jewelry & Accessories [cite: 191]</li>
+                            [cite_start]<li>Clothing & Fashion [cite: 435]</li>
+                            [cite_start]<li>Shoes [cite: 436]</li>
+                            [cite_start]<li>Electronics [cite: 438]</li>
+                            [cite_start]<li>Mobile Phones & Accessories [cite: 439]</li>
+                            [cite_start]<li>Furniture [cite: 440]</li>
+                            [cite_start]<li>Jewelry & Accessories [cite: 442]</li>
                         </ul>
                     </div>
 
                     <div class="p-4 rounded-lg bg-white/10 shadow-lg">
                         <h4 class="font-bold text-xl mb-2 text-[--color-light-tan]">3. Construction & Hardware</h4>
                         <ul class="text-sm space-y-1 text-white/80">
-                            [cite_start]<li>Building Materials [cite: 194]</li>
-                            [cite_start]<li>Hardware Shops [cite: 195]</li>
-                            [cite_start]<li>Electrical Supplies [cite: 196]</li>
-                            [cite_start]<li>Plumbing Supplies [cite: 197]</li>
-                            [cite_start]<li>Paint & Tools [cite: 198]</li>
-                            [cite_start]<li>Roofing & Steel [cite: 199]</li>
+                            [cite_start]<li>Building Materials [cite: 445]</li>
+                            [cite_start]<li>Hardware Shops [cite: 446]</li>
+                            [cite_start]<li>Electrical Supplies [cite: 447]</li>
+                            [cite_start]<li>Plumbing Supplies [cite: 448]</li>
+                            [cite_start]<li>Paint & Tools [cite: 449]</li>
+                            [cite_start]<li>Roofing & Steel [cite: 450]</li>
                         </ul>
                     </div>
 
                     <div class="p-4 rounded-lg bg-white/10 shadow-lg">
                         <h4 class="font-bold text-xl mb-2 text-[--color-light-tan]">4. Technology & IT Vendors</h4>
                         <ul class="text-sm space-y-1 text-white/80">
-                            [cite_start]<li>Computers & Laptops [cite: 202]</li>
-                            [cite_start]<li>Networking Equipment [cite: 203]</li>
-                            [cite_start]<li>CCTV & Security Systems [cite: 204]</li>
-                            [cite_start]<li>Software Vendors [cite: 205]</li>
-                            [cite_start]<li>Printers & Office Equipment [cite: 206]</li>
+                            [cite_start]<li>Computers & Laptops [cite: 453]</li>
+                            [cite_start]<li>Networking Equipment [cite: 454]</li>
+                            [cite_start]<li>CCTV & Security Systems [cite: 455]</li>
+                            [cite_start]<li>Software Vendors [cite: 456]</li>
+                            [cite_start]<li>Printers & Office Equipment [cite: 457]</li>
                         </ul>
                     </div>
 
                     <div class="p-4 rounded-lg bg-white/10 shadow-lg">
                         <h4 class="font-bold text-xl mb-2 text-[--color-light-tan]">5. Events & Entertainment</h4>
                         <ul class="text-sm space-y-1 text-white/80">
-                            [cite_start]<li>Decor Vendors [cite: 208]</li>
-                            [cite_start]<li>Caterers [cite: 209]</li>
-                            [cite_start]<li>Sound & Lighting [cite: 210]</li>
-                            [cite_start]<li>Photography & Videography [cite: 211]</li>
-                            [cite_start]<li>Tent, Table & Chair Hire [cite: 213]</li>
+                            [cite_start]<li>Decor Vendors [cite: 459]</li>
+                            [cite_start]<li>Caterers [cite: 460]</li>
+                            [cite_start]<li>Sound & Lighting [cite: 461]</li>
+                            [cite_start]<li>Photography & Videography [cite: 462]</li>
+                            [cite_start]<li>Tent, Table & Chair Hire [cite: 464]</li>
                         </ul>
                     </div>
 
                     <div class="p-4 rounded-lg bg-white/10 shadow-lg">
                         <h4 class="font-bold text-xl mb-2 text-[--color-light-tan]">6. Professional Services</h4>
                         <ul class="text-sm space-y-1 text-white/80">
-                            [cite_start]<li>Cleaning Services [cite: 216]</li>
-                            [cite_start]<li>Mechanics [cite: 217]</li>
-                            [cite_start]<li>Electricians [cite: 218]</li>
-                            [cite_start]<li>Plumbers [cite: 219]</li>
-                            [cite_start]<li>Printing & Branding [cite: 222]</li>
-                            [cite_start]<li>Barber & Salon Services [cite: 223]</li>
+                            [cite_start]<li>Cleaning Services [cite: 467]</li>
+                            [cite_start]<li>Mechanics [cite: 468]</li>
+                            [cite_start]<li>Electricians [cite: 469]</li>
+                            [cite_start]<li>Plumbers [cite: 470]</li>
+                            [cite_start]<li>Printing & Branding [cite: 473]</li>
+                            [cite_start]<li>Barber & Salon Services [cite: 474]</li>
                         </ul>
                     </div>
 
                     <div class="p-4 rounded-lg bg-white/10 shadow-lg">
                         <h4 class="font-bold text-xl mb-2 text-[--color-light-tan]">7. Agriculture Vendors</h4>
                         <ul class="text-sm space-y-1 text-white/80">
-                            [cite_start]<li>Seeds [cite: 225]</li>
-                            [cite_start]<li>Fertilizer [cite: 226]</li>
-                            [cite_start]<li>Chemicals [cite: 227]</li>
-                            [cite_start]<li>Livestock Feed [cite: 228]</li>
-                            [cite_start]<li>Farming Equipment [cite: 229]</li>
+                            [cite_start]<li>Seeds [cite: 476]</li>
+                            [cite_start]<li>Fertilizer [cite: 477]</li>
+                            [cite_start]<li>Chemicals [cite: 478]</li>
+                            [cite_start]<li>Livestock Feed [cite: 479]</li>
+                            [cite_start]<li>Farming Equipment [cite: 480]</li>
                         </ul>
                     </div>
 
                     <div class="p-4 rounded-lg bg-white/10 shadow-lg">
                         <h4 class="font-bold text-xl mb-2 text-[--color-light-tan]">8. Transportation & Auto</h4>
                         <ul class="text-sm space-y-1 text-white/80">
-                            [cite_start]<li>Taxi Services [cite: 232]</li>
-                            [cite_start]<li>Car Rental [cite: 233]</li>
-                            [cite_start]<li>Trucking & Logistics [cite: 234]</li>
-                            [cite_start]<li>Vehicle Spare Parts [cite: 235]</li>
-                            [cite_start]<li>Tyre & Battery Vendors [cite: 237]</li>
+                            [cite_start]<li>Taxi Services [cite: 483]</li>
+                            [cite_start]<li>Car Rental [cite: 484]</li>
+                            [cite_start]<li>Trucking & Logistics [cite: 485]</li>
+                            [cite_start]<li>Vehicle Spare Parts [cite: 486]</li>
+                            [cite_start]<li>Tyre & Battery Vendors [cite: 488]</li>
+                        </ul>
+                    </div>
+
+                    <div class="p-4 rounded-lg bg-white/10 shadow-lg">
+                        <h4 class="font-bold text-xl mb-2 text-[--color-light-tan]">9. Corporate & B2B Vendors</h4>
+                        <ul class="text-sm space-y-1 text-white/80">
+                            [cite_start]<li>Office Supplies [cite: 490]</li>
+                            [cite_start]<li>Packaging Materials [cite: 491]</li>
+                            [cite_start]<li>Cleaning Chemicals [cite: 492]</li>
+                            [cite_start]<li>Industrial Equipment [cite: 493]</li>
+                        </ul>
+                    </div>
+
+                    <div class="p-4 rounded-lg bg-white/10 shadow-lg">
+                        <h4 class="font-bold text-xl mb-2 text-[--color-light-tan]">10. Informal Market Vendors</h4>
+                        <ul class="text-sm space-y-1 text-white/80">
+                            [cite_start]<li>Soweto Market Vendors [cite: 495]</li>
+                            [cite_start]<li>Kamwala Market Sellers [cite: 496]</li>
+                            [cite_start]<li>COMESA Market Vendors [cite: 497]</li>
+                            [cite_start]<li>Street Vendors [cite: 498]</li>
+                            [cite_start]<li>Second-Hand Clothing (Salaula) [cite: 499]</li>
                         </ul>
                     </div>
                 </div>
                 
                 <div class="mt-8 text-center text-white/60 text-sm">
-                    ...plus Corporate & B2B Vendors and Informal Market Vendors.
+                    [cite_start]This comprehensive list covers all major vendor types in Lusaka, Zambia, supported by the Job Connect and Events platform[cite: 322, 424].
                 </div>
             </div>
         </section>
@@ -425,7 +461,24 @@
     </footer>
 
     <script>
-        // Array of background images for the carousel
+        // Mobile Menu Toggle Logic
+        document.getElementById('mobile-menu-button').addEventListener('click', function() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('hidden');
+            // Change icon from menu to close when open
+            const icon = this.querySelector('i');
+            if (mobileMenu.classList.contains('hidden')) {
+                icon.setAttribute('data-lucide', 'menu');
+            } else {
+                icon.setAttribute('data-lucide', 'x');
+            }
+            // Re-render lucide icons after changing the data-lucide attribute
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+        });
+
+        // Hero Carousel Logic
         const heroImages = [
             'https://images.unsplash.com/photo-1517048676732-d65bc937f952?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', // Team collaboration
             'https://images.unsplash.com/photo-1504384308090-c894fd241d81?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', // Meeting in office
