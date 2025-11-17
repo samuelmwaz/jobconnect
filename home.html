@@ -22,8 +22,6 @@
             font-family: 'Inter', sans-serif; 
             background-color: var(--color-deep-blue);
             color: white; 
-            /* *** CHANGE FOR FIXED PAGE: Prevents scrolling on the body *** */
-            overflow: hidden; 
         }
 
         /* Primary Button Colors (Dark Blue to Slate Blue Gradient) */
@@ -53,22 +51,13 @@
         #hero-section {
             position: relative;
             overflow: hidden;
-            /* Adjust height to fit mobile screen comfortably while fixed */
-            height: 100vh; 
+            height: 70vh; /* Adjust height as needed */
             min-height: 500px;
             display: flex;
             align-items: center;
             justify-content: center;
             text-align: center;
         }
-
-        /* *** CHANGE FOR FIXED PAGE: The main content should be scrollable inside a fixed container *** */
-        .fixed-container {
-            height: calc(100vh - 5rem); /* Full viewport height minus header height (approx 5rem) */
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch; /* Smoother scrolling on iOS */
-        }
-
 
         .hero-background-image {
             position: absolute;
@@ -129,25 +118,22 @@
     
 <header class="sticky top-0 z-10 bg-[--color-deep-blue] bg-opacity-95 shadow-lg">
         <div class="max-w-7xl mx-auto flex justify-between items-center p-4 sm:p-6">
-            <div class="text-xl sm:text-2xl font-bold flex items-center text-[--color-light-tan]">
+            <div class="text-2xl font-bold flex items-center text-[--color-light-tan]">
                 <i data-lucide="rocket" class="w-6 h-6 mr-2 text-[--color-light-tan]"></i>
                 JobConnect and events
             </div>
-            <nav class="hidden sm:flex space-x-4 sm:space-x-6 text-sm sm:text-base">
+            <nav class="flex space-x-4 sm:space-x-6 text-sm sm:text-base">
                 <a href="#about" class="text-white hover:text-[--color-light-tan] transition duration-150 py-2">About</a>
                 <a href="./employee.html" class="text-white hover:text-[--color-light-tan] transition duration-150 py-2">Employee Portal</a>
                 <a href="./employer_dashboard.html" class="text-white hover:text-[--color-light-tan] transition duration-150 py-2">Employer Console</a>
+                <a href="#vendor-support" class="text-white hover:text-[--color-light-tan] transition duration-150 py-2">Vendors</a>
                 <a href="./regisrtation.html" class="btn-primary py-2 px-4 rounded-lg">Register</a>
             </nav>
-            <button class="sm:hidden text-white" aria-label="Toggle navigation">
-                <i data-lucide="menu" class="w-6 h-6"></i>
-            </button>
         </div>
     </header>
 
     
-<div class="fixed-container">
-    <main>
+<main>
         
         
 <section id="hero-section">
@@ -159,18 +145,18 @@
             <div class="hero-background-image" style="background-image: url('https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')"></div>
             
             <div class="hero-content max-w-4xl mx-auto px-4">
-                <h1 class="text-3xl sm:text-6xl font-extrabold tracking-tight mb-4 text-[--color-light-tan]">
+                <h1 class="text-4xl sm:text-6xl font-extrabold tracking-tight mb-4 text-[--color-light-tan]">
                     Your Next Career Move Starts Here
                 </h1>
-                <p class="text-lg sm:text-2xl font-light text-white/90 mb-8">
+                <p class="text-xl sm:text-2xl font-light text-white/90 mb-8">
                     Connecting internal talent with opportunity, instantly.
                 </p>
                 <div class="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-6">
-                    <a href="./employee.html" class="btn-primary py-3 px-8 rounded-xl text-base sm:text-lg flex items-center justify-center">
+                    <a href="./employee.html" class="btn-primary py-3 px-8 rounded-xl text-lg flex items-center justify-center">
                         <i data-lucide="briefcase" class="w-5 h-5 mr-2"></i>
                         Find an Internal Job
                     </a>
-                    <a href="./employer_dashboard.html" class="py-3 px-8 rounded-xl text-base sm:text-lg font-semibold border-2 border-[--color-slate-blue] text-[--color-light-blue] hover:bg-[--color-slate-blue] hover:text-white transition duration-200 flex items-center justify-center">
+                    <a href="./employer_dashboard.html" class="py-3 px-8 rounded-xl text-lg font-semibold border-2 border-[--color-slate-blue] text-[--color-light-blue] hover:bg-[--color-slate-blue] hover:text-white transition duration-200 flex items-center justify-center">
                         <i data-lucide="users" class="w-5 h-5 mr-2"></i>
                         Hire Internal Talent
                     </a>
@@ -181,29 +167,29 @@
         
 <section id="about" class="py-16 sm:py-24 about-bg-img relative overflow-hidden text-white">
             <div class="about-content max-w-6xl mx-auto px-4 text-center">
-                <h2 class="text-2xl sm:text-4xl font-bold mb-4 text-[--color-light-tan]">Who We Are & What We're About</h2>
-                <p class="text-lg text-white/90 mb-12 max-w-3xl mx-auto">
+                <h2 class="text-3xl sm:text-4xl font-bold mb-4 text-[--color-light-tan]">Who We Are & What We're About</h2>
+                <p class="text-xl text-white/90 mb-12 max-w-3xl mx-auto">
                     **JobCoonnect and events ** is the dedicated internal marketplace for career growth and talent deployment within our organization. We bridge the gap between open roles and skilled employees ready for their next challenge.
                 </p>
                 
                 <div class="grid md:grid-cols-3 gap-8">
                     
                     <div class="p-6 rounded-xl shadow-2xl border-t-4 border-[--color-light-tan] card text-center bg-white/10 hover:bg-white/20">
-                        <img src="images/fe8a64e2a4a33af47e7d1f47196a6243.jpg" alt="Icon representing growth and advancement" class="w-20 h-20 sm:w-24 sm:h-24 rounded-full mx-auto mb-4 object-cover border-4 border-[--color-light-tan]">
+                        <img src="images/fe8a64e2a4a33af47e7d1f47196a6243.jpg" alt="Icon representing growth and advancement" class="w-24 h-24 rounded-full mx-auto mb-4 object-cover border-4 border-[--color-light-tan]">
                         <h3 class="text-xl font-bold mb-2 text-[--color-light-tan]">Internal Mobility</h3>
-                        <p class="text-white/80 text-sm sm:text-base">We champion the belief that our best assets are our current employees. By facilitating seamless internal transfers, we boost retention and foster career development.</p>
+                        <p class="text-white/80">We champion the belief that our best assets are our current employees. By facilitating seamless internal transfers, we boost retention and foster career development.</p>
                     </div>
 
                     <div class="p-6 rounded-xl shadow-2xl border-t-4 border-[--color-light-tan] card text-center bg-white/10 hover:bg-white/20">
-                        <img src="images/8dd01a49f3cb587a8a476be04629ba0d.jpg" alt="Icon representing speed and efficiency" class="w-20 h-20 sm:w-24 sm:h-24 rounded-full mx-auto mb-4 object-cover border-4 border-[--color-light-tan]">
+                        <img src="images/8dd01a49f3cb587a8a476be04629ba0d.jpg" alt="Icon representing speed and efficiency" class="w-24 h-24 rounded-full mx-auto mb-4 object-cover border-4 border-[--color-light-tan]">
                         <h3 class="text-xl font-bold mb-2 text-[--color-light-tan]">Speed & Efficiency</h3>
-                        <p class="text-white/80 text-sm sm:text-base">Recruit faster and reduce time-to-hire by focusing on pre-vetted, culturally aligned talent already within our ecosystem.</p>
+                        <p class="text-white/80">Recruit faster and reduce time-to-hire by focusing on pre-vetted, culturally aligned talent already within our ecosystem.</p>
                     </div>
 
                     <div class="p-6 rounded-xl shadow-2xl border-t-4 border-[--color-light-tan] card text-center bg-white/10 hover:bg-white/20">
-                        <img src="images/25f7829c62f796bb371bbc5c1fa52cb1.jpg" alt="Icon representing employee value and satisfaction" class="w-20 h-20 sm:w-24 sm:h-24 rounded-full mx-auto mb-4 object-cover border-4 border-[--color-light-tan]">
+                        <img src="images/25f7829c62f796bb371bbc5c1fa52cb1.jpg" alt="Icon representing employee value and satisfaction" class="w-24 h-24 rounded-full mx-auto mb-4 object-cover border-4 border-[--color-light-tan]">
                         <h3 class="text-xl font-bold mb-2 text-[--color-light-tan]">Employee Satisfaction</h3>
-                        <p class="text-white/80 text-sm sm:text-base">Providing transparent paths for advancement ensures employees feel valued and invested in the company's future.</p>
+                        <p class="text-white/80">Providing transparent paths for advancement ensures employees feel valued and invested in the company's future.</p>
                     </div>
                 </div>
             </div>
@@ -212,7 +198,7 @@
         
 <section class="py-16 sm:py-24 bg-[--color-deep-blue] text-white">
             <div class="max-w-6xl mx-auto px-4">
-                <h2 class="text-2xl sm:text-4xl font-bold text-center mb-12 text-[--color-light-tan]">Platform Highlights</h2>
+                <h2 class="text-3xl sm:text-4xl font-bold text-center mb-12 text-[--color-light-tan]">Platform Highlights</h2>
                 
                 <div class="grid md:grid-cols-2 gap-10 items-center mb-20">
                     
@@ -220,9 +206,9 @@
                         <img src="images/Screenshot 2025-11-04 150902.png" alt="Snapshot of an employee dashboard showing job opportunities" class="w-full h-auto object-cover transition-transform duration-500 hover:scale-[1.03]">
                     </div>
 
-                    <div class="card p-6 sm:p-8 rounded-xl border-l-4 border-[--color-light-tan] shadow-xl">
-                        <h3 class="text-2xl sm:text-3xl font-extrabold mb-4 text-[--color-light-tan]">For Employees: Seamless Career Advancement</h3>
-                        <ul class="space-y-4 text-base sm:text-lg mb-6">
+                    <div class="card p-8 rounded-xl border-l-4 border-[--color-light-tan] shadow-xl">
+                        <h3 class="text-3xl font-extrabold mb-4 text-[--color-light-tan]">For Employees: Seamless Career Advancement</h3>
+                        <ul class="space-y-4 text-lg mb-6">
                             <li class="flex items-start">
                                 <i data-lucide="search" class="w-5 h-5 flex-shrink-0 mt-1 mr-3 text-[--color-light-tan]"></i>
                                 <span>**Personalized Job Feed:** Discover internal openings that match your current skills and career goals.</span>
@@ -237,8 +223,8 @@
                             </li>
                         </ul>
                         <div class="pt-4 border-t border-white/20">
-                            <h4 class="text-lg sm:text-xl font-bold mb-3">Ready to explore?</h4>
-                            <a href="./employee.html" class="btn-primary py-2 px-5 rounded-lg inline-flex items-center text-sm">
+                            <h4 class="text-xl font-bold mb-3">Ready to explore?</h4>
+                            <a href="./employee.html" class="btn-primary py-2 px-5 rounded-lg inline-flex items-center">
                                 <i data-lucide="briefcase" class="w-4 h-4 mr-2"></i> Go to Employee Portal
                             </a>
                         </div>
@@ -247,9 +233,9 @@
 
                 <div class="grid md:grid-cols-2 gap-10 items-center">
                     
-                    <div class="card p-6 sm:p-8 rounded-xl border-r-4 border-[--color-light-tan] shadow-xl order-2 md:order-1">
-                        <h3 class="text-2xl sm:text-3xl font-extrabold mb-4 text-[--color-light-tan]">For Employers: Optimized Talent Acquisition</h3>
-                        <ul class="space-y-4 text-base sm:text-lg mb-6">
+                    <div class="card p-8 rounded-xl border-r-4 border-[--color-light-tan] shadow-xl order-2 md:order-1">
+                        <h3 class="text-3xl font-extrabold mb-4 text-[--color-light-tan]">For Employers: Optimized Talent Acquisition</h3>
+                        <ul class="space-y-4 text-lg mb-6">
                             <li class="flex items-start">
                                 <i data-lucide="database" class="w-5 h-5 flex-shrink-0 mt-1 mr-3 text-[--color-light-tan]"></i>
                                 <span>**Centralized Data:** Manage all internal applications and employee data in one place.</span>
@@ -264,8 +250,8 @@
                             </li>
                         </ul>
                         <div class="pt-4 border-t border-white/20">
-                            <h4 class="text-lg sm:text-xl font-bold mb-3">Need to hire?</h4>
-                            <a href="./employer_dashboard.html" class="btn-primary py-2 px-5 rounded-lg inline-flex items-center text-sm">
+                            <h4 class="text-xl font-bold mb-3">Need to hire?</h4>
+                            <a href="./employer_dashboard.html" class="btn-primary py-2 px-5 rounded-lg inline-flex items-center">
                                 <i data-lucide="users" class="w-4 h-4 mr-2"></i> Go to Employer Console
                             </a>
                         </div>
@@ -278,57 +264,49 @@
             </div>
         </section>
 
-        <section class="py-16 sm:py-24 about-bg-img relative overflow-hidden text-white">
-            <div class="about-content max-w-6xl mx-auto px-4">
-                <h2 class="text-2xl sm:text-4xl font-bold text-center mb-4 text-[--color-light-tan]">Our Official Policies & Guarantee</h2>
-                <p class="text-lg text-white/90 mb-12 max-w-3xl mx-auto text-center">
-                    A summary of the policies ensuring a secure, efficient, and transparent job connection process for all internal users. All users agree to abide by these policies upon utilizing our services.
+        <section id="vendor-support" class="py-16 sm:py-24 bg-[--color-slate-blue] text-white">
+            <div class="max-w-6xl mx-auto px-4">
+                <h2 class="text-3xl sm:text-4xl font-bold text-center mb-4 text-white">Vendor & Local Business Support</h2>
+                <p class="text-xl text-center text-white/90 mb-12 max-w-4xl mx-auto">
+                    Our commitment extends beyond internal talent, offering a regulated platform to support product vendors, service providers, and local businesses, ensuring legitimacy and quality service.
                 </p>
                 
-                <div class="grid md:grid-cols-2 gap-8">
+                <div class="grid md:grid-cols-3 gap-8 text-left">
                     
-                    <div class="card p-6 sm:p-8 rounded-xl shadow-2xl border-t-4 border-[--color-light-blue] bg-white/10 hover:bg-white/20">
-                        <h3 class="text-xl font-bold mb-4 text-[--color-light-blue] flex items-center">
-                            <i data-lucide="clipboard-check" class="w-5 h-5 mr-2"></i> Employee (Job Seeker) Policies
-                        </h3>
-                        <ul class="space-y-3 text-white/80 list-disc pl-5 text-sm sm:text-base">
-                            <li>You are guaranteed an interview and testing upon application. The final hiring decision is based on performance in this process.</li>
-                            <li>You are entitled to a free trial of three (3) application tries. Additional tries (up to 20) require a paid package and fee.</li>
-                            <li>Paid package users receive instant notifications for new job offers, which are not extended to free trial users.</li>
-                            <li>A document is provided to you, recorded in our database, which acts as a 'doorway' guaranteeing the interview and testing.</li>
-                        </ul>
+                    <div class="p-6 rounded-xl shadow-2xl card bg-[--color-deep-blue]/50 hover:bg-[--color-deep-blue]/70 border-t-4 border-[--color-light-tan]">
+                        <i data-lucide="file-check" class="w-8 h-8 mb-4 text-[--color-light-tan]"></i>
+                        <h3 class="text-xl font-bold mb-2 text-[--color-light-tan]">Registration & Verification</h3>
+                        <p class="text-white/80">All vendors must complete a verification process, providing accurate business details and certifications to ensure legitimacy and compliance with local regulations.</p>
                     </div>
 
-                    <div class="card p-6 sm:p-8 rounded-xl shadow-2xl border-t-4 border-[--color-light-blue] bg-white/10 hover:bg-white/20">
-                        <h3 class="text-xl font-bold mb-4 text-[--color-light-blue] flex items-center">
-                            <i data-lucide="building-2" class="w-5 h-5 mr-2"></i> Employer Policies
-                        </h3>
-                        <ul class="space-y-3 text-white/80 list-disc pl-5 text-sm sm:text-base">
-                            <li>You agree to select, interview, and test all candidates who apply for a position using this platform.</li>
-                            <li>You must provide the job details and pay a service fee based on the number of jobs submitted.</li>
-                            <li>Our service provides a valid and legal document for a particular employee and expertise in the hiring process.</li>
-                            <li>A document containing the employee's details is provided to you, recorded in our database, which serves as the 'doorway' for their interview and testing.</li>
-                        </ul>
+                    <div class="p-6 rounded-xl shadow-2xl card bg-[--color-deep-blue]/50 hover:bg-[--color-deep-blue]/70 border-t-4 border-[--color-light-tan]">
+                        <i data-lucide="hand-coins" class="w-8 h-8 mb-4 text-[--color-light-tan]"></i>
+                        <h3 class="text-xl font-bold mb-2 text-[--color-light-tan]">Fees & Documentation</h3>
+                        <p class="text-white/80">A percentage-based fee is applied per successful transaction. Official documents are provided for each transaction, serving as proof of agreement and recorded in our secure database.</p>
+                    </div>
+
+                    <div class="p-6 rounded-xl shadow-2xl card bg-[--color-deep-blue]/50 hover:bg-[--color-deep-blue]/70 border-t-4 border-[--color-light-tan]">
+                        <i data-lucide="car" class="w-8 h-8 mb-4 text-[--color-light-tan]"></i>
+                        <h3 class="text-xl font-bold mb-2 text-[--color-light-tan]">Local Business Perks</h3>
+                        <p class="text-white/80">We support local businesses, such as car sales, by providing documentation to supply tested vehicles to local people and businesses at a competitive, affordable price.</p>
                     </div>
                 </div>
-                
-                <div class="mt-12 text-center bg-white/10 p-6 rounded-xl border border-[--color-light-blue]">
-                    <h4 class="text-xl font-bold mb-3 text-[--color-light-tan] flex items-center justify-center">
-                        <i data-lucide="fingerprint" class="w-6 h-6 mr-2"></i> Commitment to Transparency
-                    </h4>
-                    <p class="text-base sm:text-lg text-white/90">
-                        We provide three (3) copies of each relevant legal document: one for the employer, one for the employee, and the third stored securely in our database.
-                    </p>
-                </div>
 
+                <div class="text-center mt-12">
+                    <a href="./regisrtation.html" class="py-3 px-8 rounded-xl text-lg font-semibold border-2 border-white text-white hover:bg-white hover:text-[--color-deep-blue] transition duration-200 inline-flex items-center">
+                        <i data-lucide="store" class="w-5 h-5 mr-2"></i>
+                        Register as a Vendor
+                    </a>
+                </div>
             </div>
         </section>
-        
+
+
         
 <section class="py-16 bg-[--color-slate-blue] text-center text-white">
-            <h2 class="text-2xl sm:text-4xl font-extrabold mb-4">Ready to Connect?</h2>
-            <p class="text-lg mb-8">Join the internal talent network today and take the first step towards your next professional milestone.</p>
-            <a href="./regisrtation.html" class="bg-[--color-light-tan] text-[--color-deep-blue] font-bold py-3 px-10 rounded-xl text-lg hover:bg-white transition duration-200 shadow-lg inline-flex items-center">
+            <h2 class="text-3xl sm:text-4xl font-extrabold mb-4">Ready to Connect?</h2>
+            <p class="text-xl mb-8">Join the internal talent network today and take the first step towards your next professional milestone.</p>
+            <a href="./regisrtation.html" class="bg-[--color-light-tan] text-[--color-deep-blue] font-bold py-3 px-10 rounded-xl text-xl hover:bg-white transition duration-200 shadow-lg inline-flex items-center">
                 <i data-lucide="user-plus" class="w-6 h-6 mr-2"></i>
                 Get Started
             </a>
@@ -341,8 +319,8 @@
         <p class="text-sm">&copy; 2025 JobConnect. Internal Mobility Solution.</p>
         <p class="text-xs mt-2">Powered by Innovation within.</p>
     </footer>
-</div>
-<script>
+
+    <script>
         // Array of background images for the carousel
         const heroImages = [
             'https://images.unsplash.com/photo-1517048676732-d65bc937f952?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', // Team collaboration
