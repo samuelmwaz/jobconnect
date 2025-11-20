@@ -46,7 +46,6 @@
     </style>
 </head>
 <body>
-    <!-- Alert Container -->
     <div id="alert-container"></div>
 
     <div class="console-container">
@@ -58,10 +57,8 @@
             </p>
         </header>
 
-        <!-- Key Metrics Section -->
         <section class="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
             
-            <!-- Active Personnel (Dynamic Count) -->
             <div class="metric-card bg-[#E3C39D] p-6 rounded-xl border-t-4 border-[#A68868] shadow-md">
                 <p class="text-sm font-medium text-gray-700 uppercase">Active Personnel (Local DB)</p>
                 <p class="text-5xl font-extrabold text-[#071739] mt-2">
@@ -70,21 +67,18 @@
                 <p class="text-sm text-gray-600 mt-1">Total Registered Users in System</p>
             </div>
             
-            <!-- Pending PTO (Static Mock) -->
             <div class="metric-card bg-[#CDD5DB] p-6 rounded-xl border-t-4 border-[#4B6382] shadow-md">
                 <p class="text-sm font-medium text-gray-700 uppercase">Pending PTO Requests</p>
                 <p class="text-5xl font-extrabold text-[#071739] mt-2">4</p>
                 <p class="text-sm text-gray-600 mt-1">Requiring HR/Manager Approval</p>
             </div>
             
-            <!-- Avg Retention Rate (Static Mock) -->
             <div class="metric-card bg-[#E3C39D] p-6 rounded-xl border-t-4 border-[#A68868] shadow-md">
                 <p class="text-sm font-medium text-gray-700 uppercase">Avg Retention Rate</p>
                 <p class="text-5xl font-extrabold text-[#071739] mt-2">92%</p>
                 <p class="text-sm text-gray-600 mt-1">Trailing 12 Months</p>
             </div>
 
-            <!-- NEW KPI: Total Job Applications (Dynamic Count) -->
             <div class="metric-card bg-[#CDD5DB] p-6 rounded-xl border-t-4 border-[#4B6382] shadow-md">
                 <p class="text-sm font-medium text-gray-700 uppercase">Total Job Applications</p>
                 <p class="text-5xl font-extrabold text-[#071739] mt-2">
@@ -94,7 +88,6 @@
             </div>
         </section>
 
-        <!-- Job Applications Overview Section -->
         <section class="bg-[#E3C39D] p-6 rounded-xl shadow-inner border-l-4 border-[#A68868] mb-10">
             <h2 class="text-2xl font-bold text-[#071739] mb-4 flex justify-between items-center">
                 Job Applications Overview
@@ -115,14 +108,96 @@
                         </tr>
                     </thead>
                     <tbody id="job-applications-table-body" class="divide-y divide-gray-100">
-                        <!-- Application data will be injected here by renderJobApplicationsList() -->
-                    </tbody>
+                        </tbody>
                 </table>
                 <div id="no-applications-message" class="p-4 text-center text-gray-700 font-medium hidden">No new job applications found.</div>
             </div>
         </section>
 
-        <!-- Team Member Overview Section -->
+        <section class="bg-[#A4B5C4] p-6 rounded-xl shadow-inner border-l-4 border-[#071739] mb-10">
+            <h2 class="text-2xl font-bold text-[#071739] mb-4 flex justify-between items-center">
+                Post New Job Listing
+                <button id="post-job-button" class="bg-[#4B6382] text-white py-2 px-4 rounded-lg text-sm font-medium hover:bg-[#071739] transition shadow-lg" onclick="postNewJob()">
+                    <i data-lucide="send" class="w-4 h-4 mr-2 inline-block"></i> Publish Job
+                </button>
+            </h2>
+            
+            <form id="new-job-form" class="bg-white p-4 rounded-lg shadow-md grid grid-cols-1 md:grid-cols-2 gap-4">
+                
+                <div><label class="block text-sm font-medium text-gray-700 mb-1">Job Title</label><input type="text" id="job-title" placeholder="e.g., Software Engineer" required class="w-full p-2 border border-gray-300 rounded-lg focus:ring-[#A68868] focus:border-[#A68868]"></div>
+                <div><label class="block text-sm font-medium text-gray-700 mb-1">Company</label><input type="text" id="job-company" placeholder="e.g., TechNova Solutions" required class="w-full p-2 border border-gray-300 rounded-lg focus:ring-[#A68868] focus:border-[#A68868]"></div>
+
+                <div><label class="block text-sm font-medium text-gray-700 mb-1">Location</label><input type="text" id="job-location" placeholder="e.g., Remote (Global) or Lusaka, Zambia" required class="w-full p-2 border border-gray-300 rounded-lg focus:ring-[#A68868] focus:border-[#A68868]"></div>
+                <div><label class="block text-sm font-medium text-gray-700 mb-1">Salary Range</label><input type="text" id="job-salary" placeholder="e.g., $120k - $140k or ZMW 35k - 45k/mo" required class="w-full p-2 border border-gray-300 rounded-lg focus:ring-[#A68868] focus:border-[#A68868]"></div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Type</label>
+                    <select id="job-type" required class="w-full p-2 border border-gray-300 rounded-lg focus:ring-[#A68868] focus:border-[#A68868]">
+                        <option value="">Select Type</option>
+                        <option value="Full-Time">Full-Time</option>
+                        <option value="Contract">Contract</option>
+                        <option value="Part-Time">Part-Time</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Industry</label>
+                    <input type="text" id="job-industry" placeholder="e.g., Software or Finance" required class="w-full p-2 border border-gray-300 rounded-lg focus:ring-[#A68868] focus:border-[#A68868]">
+                </div>
+
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Sector (For Employee Filter)</label>
+                    <select id="job-sector" required class="w-full p-2 border border-gray-300 rounded-lg focus:ring-[#A68868] focus:border-[#A68868]">
+                        <option value="">Select Sector</option>
+                        <option value="Mining">Mining</option>
+                        <option value="Energy">Energy</option>
+                        <option value="Manufacturing">Manufacturing</option>
+                        <option value="Infrastructure and Construction">Infrastructure & Construction</option>
+                        <option value="Tourism">Tourism</option>
+                        <option value="ICT">ICT</option>
+                    </select>
+                </div>
+
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Job Description</label>
+                    <textarea id="job-description" rows="4" placeholder="Brief but detailed description of the role and responsibilities." required class="w-full p-2 border border-gray-300 rounded-lg focus:ring-[#A68868] focus:border-[#A68868]"></textarea>
+                </div>
+                
+            </form>
+            <p class="text-sm text-gray-600 mt-2 text-center">Note: Click 'Publish Job' button above to submit the listing.</p>
+        </section>
+
+        <section class="bg-[#E3C39D] p-6 rounded-xl shadow-inner border-l-4 border-[#A68868] mb-10">
+            <h2 class="text-2xl font-bold text-[#071739] mb-4">Current Active Job Listings (TechNova Solutions)</h2>
+            <div id="active-jobs-list" class="space-y-3">
+                </div>
+            <div id="no-jobs-message" class="p-4 text-center text-gray-700 font-medium hidden">No active job listings found for TechNova Solutions.</div>
+        </section>
+        
+        <section class="bg-[#A4B5C4] p-6 rounded-xl shadow-inner border-l-4 border-[#071739] mb-10">
+            <h2 class="text-2xl font-bold text-[#071739] mb-4 flex justify-between items-center">
+                Employee Vendor & Event Requests
+                <button class="bg-[#4B6382] text-white py-2 px-4 rounded-lg text-sm font-medium hover:bg-[#071739] transition shadow-lg">
+                    Manage Requests
+                </button>
+            </h2>
+            
+            <div class="overflow-x-auto bg-white rounded-lg shadow-md">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-[#CDD5DB] text-[#071739] uppercase tracking-wider">
+                        <tr>
+                            <th class="p-4 text-left text-xs font-semibold">Request Type/Category</th>
+                            <th class="p-4 text-left text-xs font-semibold">Requested By</th>
+                            <th class="p-4 text-left text-xs font-semibold hidden lg:table-cell">Description Snippet</th>
+                            <th class="p-4 text-left text-xs font-semibold w-28">Status</th>
+                            <th class="p-4 text-left text-xs font-semibold w-36">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="employee-requests-table-body" class="divide-y divide-gray-100">
+                        </tbody>
+                </table>
+                <div id="no-requests-message" class="p-4 text-center text-gray-700 font-medium hidden">No employee requests found.</div>
+            </div>
+        </section>
         <section class="bg-[#A4B5C4] p-6 rounded-xl shadow-inner border-l-4 border-[#071739]">
             <h2 class="text-2xl font-bold text-[#071739] mb-4 flex justify-between items-center">
                 Team Member Overview
@@ -130,70 +205,44 @@
                     + Add New User
                 </button>
             </h2>
-            
-            <!-- Search and Filter Controls -->
-            <div class="flex flex-col sm:flex-row gap-4 mb-4">
-                <!-- Search Input -->
-                <div class="flex-grow">
-                    <input 
-                        type="text" 
-                        id="user-search-input" 
-                        placeholder="Search by email..." 
-                        class="w-full p-2 border border-gray-300 rounded-lg focus:ring-[#4B6382] focus:border-[#4B6382]"
-                        onkeyup="renderUserManagementList()"
-                    >
-                </div>
-                <!-- Role Filter Dropdown -->
-                <div class="w-full sm:w-48">
-                    <select 
-                        id="role-filter-select" 
-                        class="w-full p-2 border border-gray-300 rounded-lg bg-white focus:ring-[#4B6382] focus:border-[#4B6382]"
-                        onchange="renderUserManagementList()"
-                    >
-                        <option value="all">Filter by Role (All)</option>
-                        <option value="employee">Employee</option>
-                        <option value="employer">Employer</option>
-                    </select>
-                </div>
-            </div>
 
+            <div class="flex flex-col sm:flex-row gap-4 mb-4">
+                <input type="text" id="user-search" placeholder="Search by email or UID..." class="p-3 border border-gray-300 rounded-lg flex-grow shadow-sm">
+                <select id="user-role-filter" class="p-3 border border-gray-300 rounded-lg shadow-sm">
+                    <option value="">Filter by Role</option>
+                    <option value="employee">Employee</option>
+                    <option value="employer">Employer/Admin</option>
+                </select>
+            </div>
+            
             <div class="overflow-x-auto bg-white rounded-lg shadow-md">
                 <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-[#CDD5DB] text-[#071739] uppercase tracking-wider">
                         <tr>
-                            <th class="p-4 text-left text-xs font-semibold">Email</th>
+                            <th class="p-4 text-left text-xs font-semibold">Email Address</th>
                             <th class="p-4 text-left text-xs font-semibold w-24">Role</th>
-                            <th class="p-4 text-left text-xs font-semibold w-32 hidden sm:table-cell">User ID (Preview)</th>
+                            <th class="p-4 text-left text-xs font-semibold w-40 hidden sm:table-cell">User ID</th>
                             <th class="p-4 text-left text-xs font-semibold w-24">Status</th>
                         </tr>
                     </thead>
                     <tbody id="user-management-table-body" class="divide-y divide-gray-100">
-                        <!-- User data will be injected here by renderUserManagementList() -->
-                    </tbody>
+                        </tbody>
                 </table>
-                <div id="loading-indicator" class="p-4 text-center text-gray-500 italic hidden">Loading user data...</div>
-                <div id="no-results-message" class="p-4 text-center text-gray-700 font-medium hidden">No users match your current filters.</div>
             </div>
         </section>
+
     </div>
 
-    <!-- Footer -->
-    <footer class="text-white text-center text-xs mt-8">
-        Dashboard Data Mocked for Display
-    </footer>
-
-    <!-- JavaScript for Data Rendering and Filtering -->
     <script>
-        
-        // --- Mock Data ---
-        const localUserDB = {
-            'ceo@workflow.com': { uid: 'mock-uid-1', role: 'employer', password: 'password' },
-            'manager@workflow.com': { uid: 'mock-uid-2', role: 'employer', password: 'password' },
-            'alice@workflow.com': { uid: 'mock-uid-3', role: 'employee', password: 'password' },
-            'bob@workflow.com': { uid: 'mock-uid-4', role: 'employee', password: 'password' },
-            'charlie@workflow.com': { uid: 'mock-uid-5', role: 'employee', password: 'password' },
-            'diana@workflow.com': { uid: 'mock-uid-6', role: 'employee', password: 'password' },
-            'ella@workflow.com': { uid: 'mock-uid-7', role: 'employee', password: 'password' },
+        // --- MOCK DATA ---
+        const mockUsersDB = {
+            'alex@workflow.com': { uid: 'mock-uid-1', role: 'employee', password: 'password' },
+            'brian@workflow.com': { uid: 'mock-uid-2', role: 'employee', password: 'password' },
+            'chloe@workflow.com': { uid: 'mock-uid-3', role: 'employee', password: 'password' },
+            'derek@workflow.com': { uid: 'mock-uid-4', role: 'employee', password: 'password' },
+            'erica@workflow.com': { uid: 'mock-uid-5', role: 'employee', password: 'password' },
+            'frank@workflow.com': { uid: 'mock-uid-6', role: 'employee', password: 'password' },
+            'gina@workflow.com': { uid: 'mock-uid-7', role: 'employee', password: 'password' },
             'admin@workflow.com': { uid: 'mock-uid-8', role: 'employer', password: 'password' },
         };
 
@@ -205,6 +254,253 @@
             { name: 'Kyle Brown', email: 'kyle.brown@applied.com', position: 'Technical Writer', status: 'Reviewing', date: '2025-10-30', attachments: ['Writing_Sample_1.doc', 'Writing_Sample_2.doc', 'Kyle_Resume.pdf'] },
         ];
 
+        // --- JOB MANAGEMENT SYSTEM ---
+        const JOB_STORAGE_KEY = 'globalJobListings';
+
+        const EMPLOYEE_MOCK_JOBS = [
+            { id: 101, title: "Senior Frontend Engineer", company: "TechNova Solutions", location: "Remote (Global)", salary: "$120k - $140k", type: "Full-Time", description: "Develop and maintain user-facing features using modern React frameworks and TypeScript. Work closely with design teams to ensure pixel-perfect implementation and responsive design...", posted: "2 days ago", industry: "Software", sector: "ICT" },
+            { id: 102, title: "Digital Marketing Specialist", company: "BrightSpark Agency", location: "New York, NY", salary: "$70k - $85k", type: "Full-Time", description: "Manage paid social media campaigns and SEO strategy. Analyze performance data and generate actionable insights to improve conversion rates...", posted: "1 week ago", industry: "Marketing", sector: "ICT" },
+            { id: 103, title: "UX Designer", company: "MediFlow Health", location: "Austin, TX", salary: "Competitive", type: "Contract", description: "Design intuitive and accessible user interfaces for our flagship medical record platform. Conduct user research and usability testing...", posted: "3 weeks ago", industry: "Healthcare", sector: "ICT" },
+            { id: 104, title: "Financial Reporting Analyst", company: "Zambezi Capital", location: "Lusaka, Zambia", salary: "ZMW 35k - 45k/mo", type: "Full-Time", description: "Lead the quarterly financial analysis and reporting for the Southern Africa region, ensuring compliance with IFRS standards. Requires strong excel and database skills.", posted: "1 day ago", industry: "Finance", sector: "Infrastructure and Construction" },
+            { id: 105, title: "Agricultural Logistics Coordinator", company: "AgriSupply Co.", location: "Lusaka, Zambia", salary: "ZMW 18k - 25k/mo", type: "Contract", description: "Coordinate the transport and storage of bulk agricultural commodities across Zambia. Must have experience with local transportation networks.", posted: "4 days ago", industry: "Logistics", sector: "Manufacturing" },
+            { id: 106, title: "Mine Safety Officer", company: "Kabwe Copper", location: "Kabwe, Zambia", salary: "ZMW 40k - 50k/mo", type: "Full-Time", description: "Ensure all safety protocols are followed in underground operations.", posted: "1 week ago", industry: "Safety", sector: "Mining" },
+            { id: 107, title: "Hydropower Plant Technician", company: "ZESCO", location: "Kariba Dam, Zambia", salary: "ZMW 25k - 35k/mo", type: "Full-Time", description: "Maintain and repair electromechanical equipment at the generation facility.", posted: "2 weeks ago", industry: "Utilities", sector: "Energy" },
+            { id: 108, title: "Lodge Manager", company: "Mosi-oa-Tunya Safaris", location: "Livingstone, Zambia", salary: "ZMW 20k - 30k/mo", type: "Full-Time", description: "Oversee daily operations of a luxury safari lodge near Victoria Falls.", posted: "3 days ago", industry: "Hospitality", sector: "Tourism" },
+        ];
+        
+        // --- NEW EMPLOYEE REQUEST MANAGEMENT SYSTEM ---
+        const REQUEST_STORAGE_KEY = 'employeeRequests';
+
+        /**
+         * Retrieves the current list of job listings from LocalStorage.
+         * If LocalStorage is empty, it initializes it with the default jobs.
+         * @returns {Array} The array of job objects.
+         */
+        function getJobDatabase() {
+            const storedJobs = localStorage.getItem(JOB_STORAGE_KEY);
+            
+            if (storedJobs) {
+                return JSON.parse(storedJobs);
+            } else {
+                // First run: save the default jobs to local storage
+                localStorage.setItem(JOB_STORAGE_KEY, JSON.stringify(EMPLOYEE_MOCK_JOBS));
+                return EMPLOYEE_MOCK_JOBS;
+            }
+        }
+
+        /**
+         * Posts a new job listing to the database (Local Storage).
+         */
+        function postNewJob() {
+            const form = document.getElementById('new-job-form');
+            if (!form.reportValidity()) {
+                alertUser('Please fill out all required fields.', 'red');
+                return;
+            }
+            
+            const title = document.getElementById('job-title').value.trim();
+            const company = document.getElementById('job-company').value.trim(); 
+            const location = document.getElementById('job-location').value.trim();
+            const salary = document.getElementById('job-salary').value.trim();
+            const type = document.getElementById('job-type').value;
+            const industry = document.getElementById('job-industry').value.trim();
+            const sector = document.getElementById('job-sector').value;
+            const description = document.getElementById('job-description').value.trim();
+            
+
+            let jobDB = getJobDatabase();
+            
+            // Simple unique ID generation (highest current ID + 1, starting high to avoid clash with mocks)
+            const maxId = jobDB.length > 0 ? Math.max(...jobDB.map(j => j.id)) : 1000;
+            const newId = maxId + 1;
+
+            const newJob = {
+                id: newId,
+                title,
+                company,
+                location,
+                salary,
+                type,
+                description,
+                posted: "just now",
+                industry,
+                sector
+            };
+
+            jobDB.push(newJob);
+
+            // Save the updated list back to Local Storage
+            localStorage.setItem(JOB_STORAGE_KEY, JSON.stringify(jobDB));
+
+            // Clear the form and show success
+            form.reset();
+            alertUser(`Successfully posted new job: "${newJob.title}"!`, 'green');
+
+            // Re-render the active jobs list
+            renderActiveJobsList();
+        }
+
+        /**
+         * Renders the list of active jobs posted by the employer (TechNova Solutions).
+         */
+        function renderActiveJobsList() {
+            const listContainer = document.getElementById('active-jobs-list');
+            const noJobsMessage = document.getElementById('no-jobs-message');
+            const jobDB = getJobDatabase();
+            
+            // Filter for jobs posted by the employer (TechNova Solutions)
+            const employerJobs = jobDB.filter(j => j.company === "TechNova Solutions");
+            
+            listContainer.innerHTML = '';
+
+            if (employerJobs.length === 0) {
+                noJobsMessage.classList.remove('hidden');
+                return;
+            }
+
+            noJobsMessage.classList.add('hidden');
+            
+            employerJobs.forEach(job => {
+                const jobCard = `
+                    <div class="p-4 bg-white rounded-lg shadow border-l-4 border-[#A68868] hover:shadow-lg transition flex justify-between items-start">
+                        <div>
+                            <p class="text-lg font-semibold text-[#071739]">${job.title}</p>
+                            <p class="text-sm text-gray-600">Location: ${job.location} | Type: ${job.type}</p>
+                            <p class="text-xs text-gray-500 mt-1">Salary: ${job.salary} | Posted: ${job.posted}</p>
+                        </div>
+                        <button class="text-sm text-red-500 hover:text-red-700 font-medium ml-4" onclick="deleteJob(${job.id})">
+                            <i data-lucide="trash-2" class="w-4 h-4 mr-1 inline-block"></i> Remove
+                        </button>
+                    </div>
+                `;
+                listContainer.insertAdjacentHTML('beforeend', jobCard);
+            });
+            lucide.createIcons();
+        }
+
+        /**
+         * Deletes a job listing.
+         */
+        function deleteJob(jobId) {
+            if (!confirm("Are you sure you want to remove this job listing?")) {
+                return;
+            }
+
+            let jobDB = getJobDatabase();
+            const initialLength = jobDB.length;
+            jobDB = jobDB.filter(job => job.id !== jobId);
+
+            if (jobDB.length < initialLength) {
+                localStorage.setItem(JOB_STORAGE_KEY, JSON.stringify(jobDB));
+                alertUser(`Job ID ${jobId} removed.`, 'red');
+                renderActiveJobsList();
+            } else {
+                alertUser('Error: Job not found.', 'red');
+            }
+        }
+        
+        /**
+         * Retrieves the current list of employee requests from LocalStorage.
+         * Initializes with a mock if empty.
+         * @returns {Array} The array of request objects.
+         */
+        function getRequestDatabase() {
+            const storedRequests = localStorage.getItem(REQUEST_STORAGE_KEY);
+            
+            if (storedRequests) {
+                return JSON.parse(storedRequests);
+            } else {
+                // Mock requests to ensure the table isn't empty on first load
+                const MOCK_REQUESTS = [
+                    { id: 1, type: "Vendor", category: "Food & Beverage Vendors", description: "Need a new caterer for the bi-weekly team lunch. Focusing on local Zambian cuisine.", userEmail: "alex@workflow.com", date: "2025-11-01", status: "Pending" },
+                    { id: 2, type: "Event", category: "Training & Workshop", description: "Requesting budget approval for a 'Go-to-Market Strategy' workshop in Q1 2026.", userEmail: "chloe@workflow.com", date: "2025-10-25", status: "Approved" },
+                    { id: 3, type: "Vendor", category: "Technology & IT Vendors", description: "Looking for a local supplier for new high-resolution monitors for the design team.", userEmail: "derek@workflow.com", date: "2025-11-15", status: "Pending" },
+                ];
+                localStorage.setItem(REQUEST_STORAGE_KEY, JSON.stringify(MOCK_REQUESTS));
+                return MOCK_REQUESTS;
+            }
+        }
+        
+        /**
+         * Updates the status of a specific request.
+         */
+        function updateRequestStatus(requestId, newStatus) {
+            let requestDB = getRequestDatabase();
+            const requestIndex = requestDB.findIndex(req => req.id === requestId);
+            
+            if (requestIndex !== -1) {
+                requestDB[requestIndex].status = newStatus;
+                localStorage.setItem(REQUEST_STORAGE_KEY, JSON.stringify(requestDB));
+                alertUser(`Request ID ${requestId} ${newStatus.toLowerCase()}.`, newStatus === 'Approved' ? 'green' : 'red');
+                renderEmployeeRequestsList(); // Re-render the list
+            } else {
+                alertUser('Error: Request not found.', 'red');
+            }
+        }
+
+        /**
+         * Renders the list of employee vendor/event requests.
+         */
+        function renderEmployeeRequestsList() {
+            const listContainer = document.getElementById('employee-requests-table-body');
+            const noRequestsMessage = document.getElementById('no-requests-message');
+            const requestDB = getRequestDatabase();
+            
+            listContainer.innerHTML = '';
+
+            const pendingRequests = requestDB.filter(req => req.status === 'Pending');
+            const sortedRequests = [...pendingRequests, ...requestDB.filter(req => req.status !== 'Pending')]; // Show pending first
+
+            if (requestDB.length === 0) {
+                noRequestsMessage.classList.remove('hidden');
+                return;
+            }
+
+            noRequestsMessage.classList.add('hidden');
+            
+            sortedRequests.forEach(req => {
+                let statusClass = 'bg-gray-200 text-gray-700';
+                let actionButtons = '';
+
+                switch (req.status) {
+                    case 'Pending':
+                        statusClass = 'bg-yellow-200 text-yellow-700';
+                        actionButtons = `
+                            <button class="text-sm text-green-500 hover:text-green-700 font-medium mr-2" onclick="updateRequestStatus(${req.id}, 'Approved')">
+                                <i data-lucide="check" class="w-4 h-4 mr-1 inline-block"></i> Approve
+                            </button>
+                            <button class="text-sm text-red-500 hover:text-red-700 font-medium" onclick="updateRequestStatus(${req.id}, 'Rejected')">
+                                <i data-lucide="x" class="w-4 h-4 mr-1 inline-block"></i> Reject
+                            </button>
+                        `;
+                        break;
+                    case 'Approved':
+                        statusClass = 'bg-green-200 text-green-700';
+                        break;
+                    case 'Rejected':
+                        statusClass = 'bg-red-200 text-red-700';
+                        break;
+                }
+                
+                const row = `
+                    <tr class="hover:bg-gray-50 transition duration-150">
+                        <td class="p-4 text-sm font-medium text-gray-900">${req.type} - ${req.category}</td>
+                        <td class="p-4 text-sm text-gray-700">${req.userEmail}</td>
+                        <td class="p-4 text-sm text-gray-700 hidden lg:table-cell" title="${req.description}">${req.description.substring(0, 50)}${req.description.length > 50 ? '...' : ''}</td>
+                        <td class="p-4 text-sm text-gray-700">
+                            <span class="p-1 text-xs font-semibold uppercase tracking-wider rounded-md ${statusClass}">
+                                ${req.status}
+                            </span>
+                        </td>
+                        <td class="p-4 text-sm text-gray-700 flex items-center justify-start min-w-[150px]">
+                            ${actionButtons}
+                        </td>
+                    </tr>
+                `;
+                listContainer.insertAdjacentHTML('beforeend', row);
+            });
+            lucide.createIcons();
+        }
 
         // --- Utility Functions ---
 
@@ -213,79 +509,52 @@
          * @param {string} message The message content.
          * @param {string} type 'green' for success, 'red' for error, 'blue' for info.
          */
-        function alertUser(message, type = 'blue') {
+        function alertUser(message, type) {
             const container = document.getElementById('alert-container');
-            
-            let colorClass, iconName;
+            const alertDiv = document.createElement('div');
+            let baseClass = 'p-4 rounded-lg shadow-xl mb-3 flex items-center transition-all duration-300 transform translate-x-0';
+            let roleClass = '';
+
             switch (type) {
                 case 'green':
-                    colorClass = 'bg-green-100 border-green-400 text-green-700';
-                    iconName = 'check-circle';
+                    roleClass = 'bg-[#CDD5DB] border-[#4B6382] text-[#071739] border-l-4'; // Success (Light Blue-Gray, Slate Border, Dark Blue Text)
                     break;
                 case 'red':
-                    colorClass = 'bg-red-100 border-red-400 text-red-700';
-                    iconName = 'alert-triangle';
+                    roleClass = 'bg-[#E3C39D] border-[#A68868] text-[#071739] border-l-4'; // Error (Light Tan, Dark Tan Border, Dark Blue Text)
                     break;
                 case 'blue':
-                default:
-                    colorClass = 'bg-blue-100 border-blue-400 text-blue-700';
-                    iconName = 'info';
+                    roleClass = 'bg-[#A4B5C4] border-[#4B6382] text-[#071739] border-l-4'; // Info (Light Blue, Slate Border, Dark Blue Text)
                     break;
+                default:
+                    roleClass = 'bg-gray-100 border-gray-300 text-gray-800 border-l-4';
             }
 
-            const alertDiv = document.createElement('div');
-            alertDiv.className = `p-4 border-l-4 rounded-lg shadow-lg mb-2 ${colorClass} opacity-0 transition-opacity duration-300 transform translate-x-full`;
-            alertDiv.style.maxWidth = '300px';
+            alertDiv.className = `${baseClass} ${roleClass}`;
+            alertDiv.style.minWidth = '250px';
 
             alertDiv.innerHTML = `
-                <div class="flex items-center">
-                    <i data-lucide="${iconName}" class="w-5 h-5 mr-3"></i>
-                    <p class="font-medium text-sm">${message}</p>
-                </div>
+                <i data-lucide="${type === 'green' ? 'check-circle' : 'alert-triangle'}" class="w-5 h-5 mr-3"></i>
+                <p class="font-medium text-sm">${message}</p>
             `;
             container.appendChild(alertDiv);
-            
-            // Re-create icons for the new element
-            if (typeof lucide !== 'undefined') {
-                lucide.createIcons();
-            }
+            lucide.createIcons();
 
-            // Animate in
             setTimeout(() => {
-                alertDiv.classList.remove('opacity-0', 'translate-x-full');
-                alertDiv.classList.add('opacity-100', 'translate-x-0');
-            }, 10); // Small delay to ensure CSS transition is applied
-
-            // Animate out and remove after 5 seconds
-            setTimeout(() => {
-                alertDiv.classList.remove('opacity-100', 'translate-x-0');
-                alertDiv.classList.add('opacity-0', 'translate-x-full');
+                // Use opacity transition for smooth removal
+                alertDiv.classList.add('opacity-0', 'transition', 'duration-500');
                 setTimeout(() => alertDiv.remove(), 500);
             }, 5000);
         }
 
         /**
-         * Mocks the action of viewing an attachment.
-         * @param {string} fileName The name of the file being viewed.
-         */
-        window.viewAttachment = function(fileName) {
-            alertUser(`Simulating download/view of file: ${fileName}`, 'green');
-            console.log(`Attachment action triggered for: ${fileName}`);
-        }
-
-
-        // --- Core Rendering Logic ---
-
-        /**
-         * Renders the dynamic table of job applications and updates the KPI.
+         * Renders the mock job applications list in the table.
          */
         function renderJobApplicationsList() {
             const tableBody = document.getElementById('job-applications-table-body');
-            const totalApplicationsSpan = document.getElementById('total-applications');
             const noApplicationsMessage = document.getElementById('no-applications-message');
+            const totalApplicationsSpan = document.getElementById('total-applications');
+            tableBody.innerHTML = '';
 
-            tableBody.innerHTML = ''; 
-            
             if (mockApplicationsDB.length === 0) {
                 noApplicationsMessage.classList.remove('hidden');
                 totalApplicationsSpan.textContent = 0;
@@ -296,7 +565,6 @@
             totalApplicationsSpan.textContent = mockApplicationsDB.length;
 
             mockApplicationsDB.forEach(app => {
-                
                 let statusClass = 'bg-gray-200 text-gray-700';
                 switch (app.status) {
                     case 'New':
@@ -309,21 +577,15 @@
                         statusClass = 'bg-blue-200 text-blue-700';
                         break;
                 }
-                
+
                 // Create attachment links/buttons
                 const attachmentCount = app.attachments ? app.attachments.length : 0;
                 let attachmentContent = `<span class="text-gray-500 italic">None</span>`;
-
                 if (attachmentCount > 0) {
-                    // Create a clickable paperclip icon with the count
-                    const firstFileName = app.attachments[0]; // Use the first file name for the mock action
+                    // Create a clickable paperclip icon with count
                     attachmentContent = `
-                        <button 
-                            onclick="viewAttachment('${firstFileName}')" 
-                            class="flex items-center text-[#071739] hover:text-[#4B6382] font-semibold transition text-sm"
-                            title="View ${firstFileName}"
-                        >
-                            <i data-lucide="paperclip" class="w-4 h-4 mr-1"></i>
+                        <button title="${app.attachments.join(', ')}" class="text-[#4B6382] hover:text-[#071739] transition flex items-center text-sm">
+                            <i data-lucide="paperclip" class="w-4 h-4 mr-1 inline-block"></i>
                             (${attachmentCount})
                         </button>
                     `;
@@ -332,70 +594,66 @@
 
                 const row = `
                     <tr class="hover:bg-gray-50 transition duration-150">
-                        <td class="p-4 text-sm text-gray-800 font-medium">${app.name}</td>
-                        <td class="p-4 text-sm text-gray-700 font-semibold">${app.position}</td>
+                        <td class="p-4 text-sm font-medium text-gray-900">${app.name}</td>
+                        <td class="p-4 text-sm text-gray-700">${app.position}</td>
                         <td class="p-4 text-sm text-gray-700">
                             <span class="p-1 text-xs font-semibold uppercase tracking-wider rounded-md ${statusClass}">
                                 ${app.status}
                             </span>
                         </td>
-                        <td class="p-4 text-sm font-mono text-gray-500 hidden sm:table-cell">${app.date}</td>
+                        <td class="p-4 text-sm text-gray-500 hidden sm:table-cell">${app.date}</td>
                         <td class="p-4 text-sm text-gray-700">${attachmentContent}</td>
                     </tr>
                 `;
                 tableBody.insertAdjacentHTML('beforeend', row);
             });
-             // Re-create icons after dynamically adding content
-            if (typeof lucide !== 'undefined') {
-                lucide.createIcons();
-            }
+            lucide.createIcons(); // Initialize new icons
         }
 
         /**
-         * Renders the dynamic table of users for the Employer Console, applying search and filter logic.
+         * Renders the user management table (mock data).
          */
         function renderUserManagementList() {
             const tableBody = document.getElementById('user-management-table-body');
             const totalEmployeesSpan = document.getElementById('total-employees');
-            const noResultsMessage = document.getElementById('no-results-message');
-            
-            // Get current filter values
-            const searchInput = document.getElementById('user-search-input').value.toLowerCase();
-            const roleFilter = document.getElementById('role-filter-select').value;
-            
-            // Clear existing content
-            tableBody.innerHTML = ''; 
-            noResultsMessage.classList.add('hidden');
-            
-            const userEmails = Object.keys(localUserDB);
-            
-            // 1. Filter the users
-            const filteredUsers = userEmails.filter(email => {
-                const user = localUserDB[email];
-                
-                // Search check
-                const matchesSearch = email.toLowerCase().includes(searchInput);
-                
-                // Role filter check
-                const matchesRole = roleFilter === 'all' || user.role === roleFilter;
-                
-                return matchesSearch && matchesRole;
-            }).map(email => ({ email: email, ...localUserDB[email] }));
+            const userSearch = document.getElementById('user-search');
+            const roleFilter = document.getElementById('user-role-filter');
 
-            // 2. Render results or No Results message
-            if (filteredUsers.length === 0) {
-                noResultsMessage.classList.remove('hidden');
-            } else {
-                filteredUsers.forEach(user => {
-                    
-                    // Determine styling based on role
-                    const roleIsEmployer = user.role === 'employer';
-                    const roleClass = roleIsEmployer 
-                        ? 'bg-[#A68868] text-white' // Dark Tan for Employer
-                        : 'bg-[#4B6382] text-white'; // Slate Blue for Employee
-                    
-                    const status = 'Active'; // Mock status
-                    const statusClass = 'text-green-600 font-bold';
+            // Collect all users and their details
+            let userEmails = Object.keys(mockUsersDB);
+            let filteredUsers = userEmails.map(email => ({
+                email: email,
+                ...mockUsersDB[email]
+            }));
+
+            // Apply filter listeners (for a fully dynamic table)
+            const applyFilters = () => {
+                const searchValue = userSearch.value.toLowerCase();
+                const roleValue = roleFilter.value;
+
+                tableBody.innerHTML = '';
+                
+                let currentFiltered = userEmails.map(email => ({ email: email, ...mockUsersDB[email] }));
+
+                // 1. Filter by Role
+                if (roleValue) {
+                    currentFiltered = currentFiltered.filter(user => user.role === roleValue);
+                }
+
+                // 2. Filter by Search Text (email or UID)
+                if (searchValue) {
+                    currentFiltered = currentFiltered.filter(user => 
+                        user.email.toLowerCase().includes(searchValue) || 
+                        user.uid.toLowerCase().includes(searchValue)
+                    );
+                }
+
+                // Render filtered results
+                currentFiltered.forEach(user => {
+                    const roleClass = user.role === 'employer' ? 'bg-[#071739] text-white' : 'bg-[#E3C39D] text-[#071739]';
+                    // Mocking status
+                    const status = Math.random() > 0.1 ? 'Active' : 'On Leave';
+                    const statusClass = status === 'Active' ? 'text-green-600 font-bold' : 'text-yellow-600 font-bold';
                     
                     const row = `
                         <tr class="hover:bg-gray-50 transition duration-150">
@@ -405,14 +663,19 @@
                                     ${user.role}
                                 </span>
                             </td>
-                            <!-- Truncate UID for cleaner display -->
                             <td class="p-4 text-sm font-mono text-gray-500 hidden sm:table-cell">${user.uid.substring(0, 10)}...</td>
                             <td class="p-4 text-sm ${statusClass}">${status}</td>
                         </tr>
                     `;
                     tableBody.insertAdjacentHTML('beforeend', row);
                 });
-            }
+            };
+
+            userSearch.addEventListener('input', applyFilters);
+            roleFilter.addEventListener('change', applyFilters);
+
+            // Initial render
+            applyFilters();
             
             // Update the KPI for total active personnel (total, not filtered count)
             totalEmployeesSpan.textContent = userEmails.length;
@@ -424,6 +687,8 @@
         window.onload = function() {
             renderUserManagementList();
             renderJobApplicationsList(); 
+            renderActiveJobsList();
+            renderEmployeeRequestsList(); // NEW: Call to render employee requests
         }
 
     </script>
